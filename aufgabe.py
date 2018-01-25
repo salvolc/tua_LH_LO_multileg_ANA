@@ -124,7 +124,23 @@ for sam in samples:
 
 
 
+topmassup=180
+topmassdown=165
+bmassup=5.2
+bmassdown=3.2
+umassup=1
+umassdown=0
+wmassup=95
+wmassdown=65
 
+default_range_up=500
+default_range_down=0
+
+default_nbins = 32
+mass_nbins = 64
+
+ratiox=10
+ratioy=4
 for par in part:
 	for var in vari:
 		nbin = default_nbins
@@ -163,11 +179,16 @@ for par in part:
 		evd = evd[evd!=0]
 		evi = evi[evi!=0]
 		ev = np.concatenate((evp, evd), axis=0)
-		print(len(ev))
+		print(par+var)
+		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+
+		plt.close()
 		plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
-		#n,bins,a = plt.hist(ev,label="production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
-		##plot_error_region2(n, np.sqrt(n), bins,"blue")
-		#n,bins,a = plt.hist(evi,label="interference",bins=nbin,lw=0.5,color="red",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		plot_error_region2(n,1/np.sqrt(vn)*n, bins,"blue")
+		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
 		plt.xlabel(r"$"+var+"("+par+")"+r"$")
 		plt.ylabel("N")
 		plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))

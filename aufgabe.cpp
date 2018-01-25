@@ -100,6 +100,7 @@ int main(int argc, char const *argv[])
 	string fileTuPhiNames[3];fileTuPhiNames[0] = "data/dec_UQuark_Phi_truth";fileTuPhiNames[1] = "data/int_UQuark_Phi_truth";fileTuPhiNames[2] = "data/pro_UQuark_Phi_truth";
 	string fileTuMNames[3];fileTuMNames[0] = "data/dec_UQuark_M_truth";fileTuMNames[1] = "data/int_UQuark_M_truth";fileTuMNames[2] = "data/pro_UQuark_M_truth";
 
+	string fileWeightNames[3];fileWeightNames[0] = "data/dec_weight_truth";fileWeightNames[1] = "data/int_weight_truth";fileWeightNames[2] = "data/pro_weight_truth";
 
 
 	for (int iFile = 0; iFile < 3; ++iFile)
