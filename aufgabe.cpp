@@ -50,10 +50,13 @@ int get_numberOfbJets(string fileName);
 TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[], double mass);
 TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[]);
 int get_nTruth(string fileName, int PID);
-VectorXd vertex_match(TClonesArray* TCP);
+VectorXd vertex_match(TClonesArray* TCP, int iEvent);
+double get_weight(TBranch* branchE, int iEvent);
+
 
 
 int error=0;
+bool debug=true;
 
 int main(int argc, char const *argv[])
 {
@@ -63,16 +66,16 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decaymode_commmadecay_LO.root";
+	string fileName = "samples/tua_LH_decay_multileg_LO_tt_wbau.root";
 	int nEvents = get_nevents(fileName);
 	MatrixXd ev = get_eventdisplay(fileName,1);
 	speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decaymode_commmadecay_LO.root";
-	fileNames[1] = "samples/tua_LH_interference_LO_multileg_tua.root";
-	fileNames[2] = "samples/tua_LH_production_mulileg_tua_LO.root";
+	fileNames[0] = "samples/tua_LH_decay_multileg_LO_tt_wbau.root";
+	fileNames[1] = "samples/tua_LH_interfernce_multileg_LO_ta_taj.root";
+	fileNames[2] = "samples/tua_LH_production_LO_multileg_ta_taj.root";
 
 	string fileTPPTNames[3];fileTPPTNames[0] = "data/dec_Photon_PT_truth";fileTPPTNames[1] = "data/int_Photon_PT_truth";fileTPPTNames[2] = "data/pro_Photon_PT_truth";
 	string fileTPEtaNames[3];fileTPEtaNames[0] = "data/dec_Photon_Eta_truth";fileTPEtaNames[1] = "data/int_Photon_Eta_truth";fileTPEtaNames[2] = "data/pro_Photon_Eta_truth";
@@ -102,6 +105,29 @@ int main(int argc, char const *argv[])
 
 	string fileWeightNames[3];fileWeightNames[0] = "data/dec_weight_truth";fileWeightNames[1] = "data/int_weight_truth";fileWeightNames[2] = "data/pro_weight_truth";
 
+	string fileTtPRNames[3];fileTtPRNames[0] = "data/dec_TopQuark_Photon_R_truth";fileTtPRNames[1] = "data/int_TopQuark_Photon_R_truth";fileTtPRNames[2] = "data/pro_TopQuark_Photon_R_truth";
+	string fileTtbRNames[3];fileTtbRNames[0] = "data/dec_TopQuark_BQuark_R_truth";fileTtbRNames[1] = "data/int_TopQuark_BQuark_R_truth";fileTtbRNames[2] = "data/pro_TopQuark_BQuark_R_truth";
+	string fileTtWRNames[3];fileTtWRNames[0] = "data/dec_TopQuark_WBoson_R_truth";fileTtWRNames[1] = "data/int_TopQuark_WBoson_R_truth";fileTtWRNames[2] = "data/pro_TopQuark_WBoson_R_truth";
+	string fileTtjRNames[3];fileTtjRNames[0] = "data/dec_TopQuark_LeadingJet_R_truth";fileTtjRNames[1] = "data/int_TopQuark_LeadingJet_R_truth";fileTtjRNames[2] = "data/pro_TopQuark_LeadingJet_R_truth";
+
+	string fileTtPMNames[3];fileTtPMNames[0] = "data/dec_TopQuark_Photon_M_truth";fileTtPMNames[1] = "data/int_TopQuark_Photon_M_truth";fileTtPMNames[2] = "data/pro_TopQuark_Photon_M_truth";
+	string fileTtbMNames[3];fileTtbMNames[0] = "data/dec_TopQuark_BQuark_M_truth";fileTtbMNames[1] = "data/int_TopQuark_BQuark_M_truth";fileTtbMNames[2] = "data/pro_TopQuark_BQuark_M_truth";
+	string fileTtWMNames[3];fileTtWMNames[0] = "data/dec_TopQuark_WBoson_M_truth";fileTtWMNames[1] = "data/int_TopQuark_WBoson_M_truth";fileTtWMNames[2] = "data/pro_TopQuark_WBoson_M_truth";
+	string fileTtjMNames[3];fileTtjMNames[0] = "data/dec_TopQuark_LeadingJet_M_truth";fileTtjMNames[1] = "data/int_TopQuark_LeadingJet_M_truth";fileTtjMNames[2] = "data/pro_TopQuark_LeadingJet_M_truth";
+
+	string fileTPtRNames[3];fileTPtRNames[0] = "data/dec_Photon_TopQuark_R_truth";fileTPtRNames[1] = "data/int_Photon_TopQuark_R_truth";fileTPtRNames[2] = "data/pro_Photon_TopQuark_R_truth";
+	string fileTPbRNames[3];fileTPbRNames[0] = "data/dec_Photon_BQuark_R_truth";fileTPbRNames[1] = "data/int_Photon_BQuark_R_truth";fileTPbRNames[2] = "data/pro_Photon_BQuark_R_truth";
+	string fileTPWRNames[3];fileTPWRNames[0] = "data/dec_Photon_WBoson_R_truth";fileTPWRNames[1] = "data/int_Photon_WBoson_R_truth";fileTPWRNames[2] = "data/pro_Photon_WBoson_R_truth";
+	string fileTPjRNames[3];fileTPjRNames[0] = "data/dec_Photon_LeadingJet_R_truth";fileTPjRNames[1] = "data/int_Photon_LeadingJet_R_truth";fileTPjRNames[2] = "data/pro_Photon_LeadingJet_R_truth";
+
+	string fileTPtMNames[3];fileTPtMNames[0] = "data/dec_Photon_TopQuark_M_truth";fileTPtMNames[1] = "data/int_Photon_TopQuark_M_truth";fileTPtMNames[2] = "data/pro_Photon_TopQuark_M_truth";
+	string fileTPbMNames[3];fileTPbMNames[0] = "data/dec_Photon_BQuark_M_truth";fileTPbMNames[1] = "data/int_Photon_BQuark_M_truth";fileTPbMNames[2] = "data/pro_Photon_BQuark_M_truth";
+	string fileTPWMNames[3];fileTPWMNames[0] = "data/dec_Photon_WBoson_M_truth";fileTPWMNames[1] = "data/int_Photon_WBoson_M_truth";fileTPWMNames[2] = "data/pro_Photon_WBoson_M_truth";
+	string fileTPjMNames[3];fileTPjMNames[0] = "data/dec_Photon_LeadingJet_M_truth";fileTPjMNames[1] = "data/int_Photon_LeadingJet_M_truth";fileTPjMNames[2] = "data/pro_Photon_LeadingJet_M_truth";
+
+
+
+
 
 	for (int iFile = 0; iFile < 3; ++iFile)
 	{
@@ -111,6 +137,7 @@ int main(int argc, char const *argv[])
 
 
 		TBranch *bP 		= tree->GetBranch("Particle");
+		TBranch *bE 		= tree->GetBranch("Event");
 		TClonesArray *TCP 	= 0;
 		bP->SetAddress(&TCP);
 		bP->GetEntry(0);
@@ -118,7 +145,6 @@ int main(int argc, char const *argv[])
 		int nEvents = get_nevents(fileNames[iFile].c_str());
 		MatrixXd ev = get_eventdisplay(fileNames[iFile].c_str(),1);
 
-		bool truth = true;
 
 		VectorXd VTPhotonPT = VectorXd::Zero(nEvents);VectorXd VTPhotonEta = VectorXd::Zero(nEvents);VectorXd VTPhotonPhi = VectorXd::Zero(nEvents);
 		VectorXd VTTopQuarkPT = VectorXd::Zero(nEvents);VectorXd VTTopQuarkEta = VectorXd::Zero(nEvents);VectorXd VTTopQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTTopQuarkM = VectorXd::Zero(nEvents);
@@ -126,50 +152,83 @@ int main(int argc, char const *argv[])
 		VectorXd VTBQuarkPT = VectorXd::Zero(nEvents);VectorXd VTBQuarkEta = VectorXd::Zero(nEvents);VectorXd VTBQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTBQuarkM = VectorXd::Zero(nEvents);
 		VectorXd VTUQuarkPT = VectorXd::Zero(nEvents);VectorXd VTUQuarkEta = VectorXd::Zero(nEvents);VectorXd VTUQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTUQuarkM = VectorXd::Zero(nEvents);
 
+		VectorXd VTTopQuark_Photon_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_LedJet_R = VectorXd::Zero(nEvents);
+		VectorXd VTTopQuark_Photon_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_LedJet_M = VectorXd::Zero(nEvents);
 
-		for (int iEvent = 0; iEvent < nEvents && truth; ++iEvent)
+		VectorXd VTPhoton_TopQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_LedJet_R = VectorXd::Zero(nEvents);
+		VectorXd VTPhoton_TopQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_LedJet_M = VectorXd::Zero(nEvents);
+
+		int i_unmatched = 0;
+
+		for (int iEvent = 0; iEvent < nEvents; ++iEvent)
 		{
+			//if(debug){cout<<"Input Number for next Event"<<endl;string a;cin >> a;}
+
 			bP->GetEntry(iEvent);
 
 			int nParticles = TCP->GetEntries();
 
-/*			string a;
-			cin >> a;*/
-			VectorXd i_matched = VectorXd::Zero(4); i_matched = vertex_match(TCP);
-			if(i_matched(6)==0){continue;}
+			VectorXd i_matched = VectorXd::Zero(4); i_matched = vertex_match(TCP,iFile);
+
+			if(i_matched(6)==0 || i_matched(7)==0 || i_matched(8)==0 || i_matched(9)==0){i_unmatched++;continue;}
 
 			GenParticle* P_Particle = (GenParticle*)TCP->At(i_matched(0));
+			TLorentzVector 	TVPhoton(P_Particle->Px,P_Particle->Py,P_Particle->Pz,P_Particle->E);
 			VTPhotonPT(iEvent) = P_Particle->PT;
 			VTPhotonEta(iEvent) = P_Particle->Eta;
 			VTPhotonPhi(iEvent) = P_Particle->Phi;
 
 			P_Particle = (GenParticle*)TCP->At(i_matched(1));
+			TLorentzVector	TVTopQuark(P_Particle->Px,P_Particle->Py,P_Particle->Pz,P_Particle->E);
 			VTTopQuarkPT(iEvent) = P_Particle->PT;
 			VTTopQuarkEta(iEvent) = P_Particle->Eta;
 			VTTopQuarkPhi(iEvent) = P_Particle->Phi;
 			VTTopQuarkM(iEvent) = P_Particle->Mass;
-
-			P_Particle = (GenParticle*)TCP->At(i_matched(4));
-			VTBQuarkPT(iEvent) = P_Particle->PT;
-			VTBQuarkEta(iEvent) = P_Particle->Eta;
-			VTBQuarkPhi(iEvent) = P_Particle->Phi;
-			VTBQuarkM(iEvent) = P_Particle->Mass;
 
 			P_Particle = (GenParticle*)TCP->At(i_matched(2));
 			VTUQuarkPT(iEvent) = P_Particle->PT;
 			VTUQuarkEta(iEvent) = P_Particle->Eta;
 			VTUQuarkPhi(iEvent) = P_Particle->Phi;
 			VTUQuarkM(iEvent) = P_Particle->Mass;
+	
+			P_Particle = (GenParticle*)TCP->At(i_matched(4));
+			TLorentzVector	TVbQuark(P_Particle->Px,P_Particle->Py,P_Particle->Pz,P_Particle->E);
+			VTBQuarkPT(iEvent) = P_Particle->PT;
+			VTBQuarkEta(iEvent) = P_Particle->Eta;
+			VTBQuarkPhi(iEvent) = P_Particle->Phi;
+			VTBQuarkM(iEvent) = P_Particle->Mass;
 
 			P_Particle = (GenParticle*)TCP->At(i_matched(5));
+			TLorentzVector	TVWBoson(P_Particle->Px,P_Particle->Py,P_Particle->Pz,P_Particle->E);
 			VTWBosonPT(iEvent) = P_Particle->PT;
 			VTWBosonEta(iEvent) = P_Particle->Eta;
 			VTWBosonPhi(iEvent) = P_Particle->Phi;
 			VTWBosonM(iEvent) = P_Particle->Mass;
-			if(iEvent%2000==0){ladebalken(iEvent*(iFile+1),nEvents*3);}
-			//cout << "Event " << iEvent << " Photon PT " << VTPhotonPT(iEvent) << " TopQuarkPT " << VTTopQuarkPT(iEvent) << endl;
-		}
 
+			VTTopQuark_Photon_R(iEvent) = TVTopQuark.DeltaR(TVPhoton);
+			VTTopQuark_bQuark_R(iEvent) = TVTopQuark.DeltaR(TVbQuark);
+			VTTopQuark_WBoson_R(iEvent) = TVTopQuark.DeltaR(TVWBoson);
+
+			VTTopQuark_Photon_M(iEvent) = (TVTopQuark+TVPhoton).M();
+			VTTopQuark_bQuark_M(iEvent) = (TVTopQuark+TVbQuark).M();
+			VTTopQuark_WBoson_M(iEvent) = (TVTopQuark+TVWBoson).M();
+
+			VTPhoton_TopQuark_R(iEvent) = TVPhoton.DeltaR(TVTopQuark);
+			VTPhoton_bQuark_R(iEvent) = TVPhoton.DeltaR(TVbQuark);
+			VTPhoton_WBoson_R(iEvent) = TVPhoton.DeltaR(TVWBoson);
+
+			VTPhoton_TopQuark_M(iEvent) = (TVPhoton+TVTopQuark).M();
+			VTPhoton_bQuark_M(iEvent) = (TVPhoton+TVbQuark).M();
+			VTPhoton_WBoson_M(iEvent) = (TVPhoton+TVWBoson).M();
+
+
+
+			//if(iEvent%100==0){ladebalken(iEvent*(iFile+1),nEvents*3);}
+			//if(debug)cout << "Event " << iEvent << " Photon PT " << VTPhotonPT(iEvent) << " TopQuarkPT " << VTTopQuarkPT(iEvent) << endl;
+			//if(debug)cout << get_eventdisplay_particle(fileNames[iFile],iEvent,22).block(0,0,5,12)<< endl;
+			//if(debug)cout << get_eventdisplay_particle(fileNames[iFile],iEvent,6)<< endl;
+			//if(debug)cout << get_eventdisplay_particle(fileNames[iFile],iEvent,-6)<< endl;
+		}
 
 		speichere(fileTPPTNames[iFile],VTPhotonPT);
 		speichere(fileTPEtaNames[iFile],VTPhotonEta);
@@ -195,6 +254,23 @@ int main(int argc, char const *argv[])
 		speichere(fileTWPhiNames[iFile],VTWBosonPhi);
 		speichere(fileTWMNames[iFile],VTWBosonM);
 
+		speichere(fileTtPRNames[iFile],VTTopQuark_Photon_R);
+		speichere(fileTtbRNames[iFile],VTTopQuark_bQuark_R);
+		speichere(fileTtWRNames[iFile],VTTopQuark_WBoson_R);
+
+		speichere(fileTtPMNames[iFile],VTTopQuark_Photon_M);
+		speichere(fileTtbMNames[iFile],VTTopQuark_bQuark_M);
+		speichere(fileTtWMNames[iFile],VTTopQuark_WBoson_M);
+
+		speichere(fileTPtRNames[iFile],VTPhoton_TopQuark_R);
+		speichere(fileTPbRNames[iFile],VTPhoton_bQuark_R);
+		speichere(fileTPWRNames[iFile],VTPhoton_WBoson_R);
+
+		speichere(fileTPtMNames[iFile],VTPhoton_TopQuark_M);
+		speichere(fileTPbMNames[iFile],VTPhoton_bQuark_M);
+		speichere(fileTPWMNames[iFile],VTPhoton_WBoson_M);
+
+		cout << i_unmatched << endl;
 
 		file->Close();
 	}
@@ -203,6 +279,152 @@ int main(int argc, char const *argv[])
 
 }
 
+
+
+VectorXd vertex_match(TClonesArray* TCP,int iFile){
+//	int npart_sel = 50;
+	int nPart = TCP->GetEntries();
+	MatrixXd particle_infos(nPart,7);
+
+	int nt = 0;int i_nt = 0;
+	int nu = 0;int i_nu = 0;
+	int ng = 0;int i_ng = 0;
+	int ngam = 0;int i_ngam = 0;
+
+	for (int iPart = 0; iPart < nPart; ++iPart)
+	{
+
+		GenParticle* P_Particle = (GenParticle*)TCP->At(iPart);
+		GenParticle* P_ParticleHelp = (GenParticle*)TCP->At(iPart);
+
+		particle_infos(iPart,0) = P_Particle->PID;
+		if(abs(P_Particle->M1) == 1){particle_infos(iPart,1) = 0;}
+		else{
+			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->M1));
+			particle_infos(iPart,1) = P_ParticleHelp->PID;
+		}
+		if(abs(P_Particle->M2) == 1){particle_infos(iPart,2) = 0;}
+		else{
+			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->M2));
+			particle_infos(iPart,2) = P_ParticleHelp->PID;
+		}
+		if(abs(P_Particle->D1) == 1){particle_infos(iPart,3) = 0;}
+		else{
+			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->D1));
+			particle_infos(iPart,3) = P_ParticleHelp->PID;
+		}
+		if(abs(P_Particle->D2) == 1){particle_infos(iPart,4) = 0;}
+		else{
+			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->D2));
+			particle_infos(iPart,4) = P_ParticleHelp->PID;
+		}
+		particle_infos(iPart,5) = iPart;
+		particle_infos(iPart,6) = abs(P_Particle->PT);
+		if(abs(particle_infos(iPart,0)) == 6)nt++;
+		if(abs(particle_infos(iPart,0)) == 2 || abs(particle_infos(iPart,0)) == 4)nu++;
+		if(abs(particle_infos(iPart,0)) == 21 || abs(particle_infos(iPart,0)) == 9)ng++;
+		if(abs(particle_infos(iPart,0)) == 22)ngam++;
+	}
+
+
+	MatrixXd t_infos = MatrixXd::Zero(nt,7);
+	MatrixXd u_infos = MatrixXd::Zero(nu,7);
+	MatrixXd g_infos = MatrixXd::Zero(ng,7);
+	MatrixXd gam_infos = MatrixXd::Zero(ngam,7);
+
+	for (int iPart = 0; iPart < nPart; ++iPart)
+	{
+		if(abs(particle_infos(iPart,0)) == 6){t_infos.row(i_nt) = particle_infos.row(iPart);i_nt++;}
+		if(abs(particle_infos(iPart,0)) == 22){gam_infos.row(i_ngam) = particle_infos.row(iPart);i_ngam++;}
+		if(abs(particle_infos(iPart,0)) == 2 || abs(particle_infos(iPart,0)) == 4){u_infos.row(i_nu) = particle_infos.row(iPart);i_nu++;}
+		if(abs(particle_infos(iPart,0)) == 21 || abs(particle_infos(iPart,0)) == 9){g_infos.row(i_ng) = particle_infos.row(iPart);i_ng++;}
+	}
+
+
+	VectorXd i_vertex_matched = VectorXd::Zero(10);
+	bool matched_t = false; 
+	bool matched_u = false;   //i_nu=i_nu/2;
+	bool matched_b = false;   //i_ngam=i_ngam/2;
+	bool matched_gam = false; //i_ng=i_ng/2; 
+	GenParticle* P_ParticleHelp = (GenParticle*)TCP->At(0);
+	for (int it = 0; it < i_nt && (!matched_t || !matched_b); ++it)
+	{
+		if ((abs(t_infos(it,1))==2 || abs(t_infos(it,2))==2 || abs(t_infos(it,3))==2 || abs(t_infos(it,4))==2) && !matched_t)
+		{
+			i_vertex_matched(1) = t_infos(it,5);
+			matched_t = true;
+		}
+/*		if ((abs(t_infos(it,1))==22 || abs(t_infos(it,2))==22 || abs(t_infos(it,3))==22 || abs(t_infos(it,4))==22) && !matched_t)
+		{
+			i_vertex_matched(1) = t_infos(it,5);
+			matched_t = true;
+		}*/
+		if (((abs(t_infos(it,1))==21 || abs(t_infos(it,2))==21) && !matched_t) && iFile > 0)
+		{
+			i_vertex_matched(1) = t_infos(it,5);
+			matched_t = true;
+		}
+		if ( (abs(t_infos(it,4))==24) && (abs(t_infos(it,3))==5))
+		{
+			i_vertex_matched(3) = t_infos(it,5);
+			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(3));
+			i_vertex_matched(4) = P_ParticleHelp->D1;
+			i_vertex_matched(5) = P_ParticleHelp->D2;
+			matched_b = true;
+		}
+		if ( (abs(t_infos(it,3))==24) && (abs(t_infos(it,4))==5))
+		{
+			i_vertex_matched(3) = t_infos(it,5);
+			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(3));
+			i_vertex_matched(4) = P_ParticleHelp->D2;
+			i_vertex_matched(5) = P_ParticleHelp->D1;
+			matched_b = true;
+		}
+	}
+
+	for (int iu = 0; iu < i_nu && !matched_u; ++iu)
+	{
+		if(abs(u_infos(iu,1))==6 || abs(u_infos(iu,2))==6 || abs(u_infos(iu,3))==6 || abs(u_infos(iu,4))==6)
+		{
+			i_vertex_matched(2) = u_infos(iu,5);
+			matched_u = true;
+		}
+	}
+	
+	for (int igam = 0; igam < i_ngam && !matched_gam; ++igam)
+	{
+		if ( (abs(gam_infos(igam,1))==21  ||  abs(gam_infos(igam,1))==9 ) || (abs(gam_infos(igam,2))==21  ||  abs(gam_infos(igam,2))==9 ) )   
+		{
+			i_vertex_matched(0) = gam_infos(igam,5);
+			matched_gam = true;
+		}
+		if (abs(gam_infos(igam,1))==2 || abs(gam_infos(igam,2))==2 || abs(gam_infos(igam,3))==2 || abs(gam_infos(igam,4))==2)
+		{
+			i_vertex_matched(0) = gam_infos(igam,5);
+			matched_gam = true;
+		}
+		if (abs(gam_infos(igam,1))==6 || abs(gam_infos(igam,2))==6 || abs(gam_infos(igam,3))==6 || abs(gam_infos(igam,4))==6)
+		{
+			i_vertex_matched(0) = gam_infos(igam,5);
+			matched_gam = true;
+		}
+	}
+	i_vertex_matched(6) = int(matched_gam);	i_vertex_matched(7) = int(matched_t);	i_vertex_matched(8) = int(matched_u);	i_vertex_matched(9) = int(matched_b);
+	
+	//cout << i_vertex_matched(6) << " Photon" << endl;
+	//cout << i_vertex_matched(7) << " Top" << endl;
+	//cout << i_vertex_matched(8) << " Up" << endl;
+	//cout << i_vertex_matched(9) << " B" << endl;
+	//if(debug)cout << particle_infos << endl;//.block(0,0,100,7) << endl;
+	//if(debug && matched_u)cout << "Up gemached" << endl;
+	//if(debug && matched_t)cout << "Top gemached" << endl;
+	//if(debug && matched_gam)cout << "Gamma gemached" << endl;
+	//if(debug && matched_b)cout << "b+W gemached" << endl;
+	//if(debug){cout << "Der Vertex Vektor:"<< endl;cout << i_vertex_matched << endl;}
+
+
+	return i_vertex_matched;
+}
 
 
 
@@ -215,7 +437,7 @@ MatrixXd get_eventdisplay(string fileName, int event){
 	branchP->SetAddress(&TCP);
 	branchP->GetEntry(event);  
 	Long64_t numberOfParticles = TCP->GetEntries();
-	MatrixXd display = MatrixXd::Zero(numberOfParticles,9);
+	MatrixXd display = MatrixXd::Zero(numberOfParticles,10);
 
 
     for (int ipart = 0; ipart < numberOfParticles; ++ipart)
@@ -231,6 +453,7 @@ MatrixXd get_eventdisplay(string fileName, int event){
 		display(ipart,6)=P->E;
 		display(ipart,7)=P->Eta;
 		display(ipart,8)=P->Phi;
+		display(ipart,9)=ipart;
 	}
 
 	file->Close();
@@ -253,7 +476,7 @@ MatrixXd get_eventdisplay_particle(string fileName, int event, int PID){
 		if (P->PID == PID)nPIDs++;
 	}
 	if(nPIDs == 0){cout << "Kein Teilchen gefunden!" << endl; return MatrixXd::Zero(1,1);}
-	MatrixXd display = MatrixXd::Zero(nPIDs,9);
+	MatrixXd display = MatrixXd::Zero(nPIDs,12);
 	nPIDs = 0;
     for (int ipart = 0; ipart < numberOfParticles; ++ipart)
 	{
@@ -268,6 +491,9 @@ MatrixXd get_eventdisplay_particle(string fileName, int event, int PID){
 		display(nPIDs,6)=P->E;
 		display(nPIDs,7)=P->Eta;
 		display(nPIDs,8)=P->Phi;
+		display(nPIDs,9)=ipart;
+		display(nPIDs,10)=P->D1;
+		display(nPIDs,11)=P->D2;
 		nPIDs++;
 		}
 	}
@@ -309,6 +535,14 @@ int get_nevents(string fileName){
 	h_file->Close();
 	return numberOfEntries;
 
+}
+
+double get_weight(TBranch* branchE, int iEvent){
+	TClonesArray *TCE = 0;
+	branchE->SetAddress(&TCE);
+	branchE->GetEntry(iEvent);  
+	HepMCEvent *E = (HepMCEvent*)TCE->At(0);
+	return E->Weight;
 }
 
 
@@ -537,171 +771,6 @@ TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[], double mass
 		return vecs[0];
 	}
 }
-
-
-VectorXd vertex_match(TClonesArray* TCP){
-//	int npart_sel = 50;
-	int nPart = TCP->GetEntries();
-	MatrixXd particle_infos(nPart,7);
-
-	int nt = 0;int i_nt = 0;
-	int nu = 0;int i_nu = 0;
-	int ng = 0;int i_ng = 0;
-	int ngam = 0;int i_ngam = 0;
-
-	for (int iPart = 0; iPart < nPart; ++iPart)
-	{
-
-		GenParticle* P_Particle = (GenParticle*)TCP->At(iPart);
-		GenParticle* P_ParticleHelp = (GenParticle*)TCP->At(iPart);
-
-		particle_infos(iPart,0) = P_Particle->PID;
-		if(abs(P_Particle->M1) == 1){particle_infos(iPart,1) = 0;}
-		else{
-			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->M1));
-			particle_infos(iPart,1) = P_ParticleHelp->PID;
-		}
-		if(abs(P_Particle->M2) == 1){particle_infos(iPart,2) = 0;}
-		else{
-			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->M2));
-			particle_infos(iPart,2) = P_ParticleHelp->PID;
-		}
-		if(abs(P_Particle->D1) == 1){particle_infos(iPart,3) = 0;}
-		else{
-			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->D1));
-			particle_infos(iPart,3) = P_ParticleHelp->PID;
-		}
-		if(abs(P_Particle->D2) == 1){particle_infos(iPart,4) = 0;}
-		else{
-			P_ParticleHelp = (GenParticle*)TCP->At(abs(P_Particle->D2));
-			particle_infos(iPart,4) = P_ParticleHelp->PID;
-		}
-		particle_infos(iPart,5) = iPart;
-		particle_infos(iPart,6) = abs(P_Particle->PT);
-
-		if(abs(particle_infos(iPart,0)) == 6)nt++;
-		if(abs(particle_infos(iPart,0)) == 2 || abs(particle_infos(iPart,0)) == 4)nu++;
-		if(abs(particle_infos(iPart,0)) == 21 || abs(particle_infos(iPart,0)) == 9)ng++;
-		if(abs(particle_infos(iPart,0)) == 22)ngam++;
-	}
-
-
-	MatrixXd t_infos = MatrixXd::Zero(nt,7);
-	MatrixXd u_infos = MatrixXd::Zero(nu,7);
-	MatrixXd g_infos = MatrixXd::Zero(ng,7);
-	MatrixXd gam_infos = MatrixXd::Zero(ngam,7);
-
-	for (int iPart = 0; iPart < nPart; ++iPart)
-	{
-		if(abs(particle_infos(iPart,0)) == 6){t_infos.row(i_nt) = particle_infos.row(iPart);i_nt++;}
-		if(abs(particle_infos(iPart,0)) == 22){gam_infos.row(i_ngam) = particle_infos.row(iPart);i_ngam++;}
-		if(abs(particle_infos(iPart,0)) == 2 || abs(particle_infos(iPart,0)) == 4){u_infos.row(i_nu) = particle_infos.row(iPart);i_nu++;}
-		if(abs(particle_infos(iPart,0)) == 21 || abs(particle_infos(iPart,0)) == 9){g_infos.row(i_ng) = particle_infos.row(iPart);i_ng++;}
-	}
-
-	//cout << particle_infos.block(0,0,50,7) << endl;
-
-	VectorXd i_vertex_matched = VectorXd::Zero(8);
-	bool matched_t = false; 
-	bool matched_u = false; i_nu=i_nu/2;
-	bool matched_b = false; i_ngam=i_ngam/2;
-	bool matched_g = false; i_ng=i_ng/2; 
-	GenParticle* P_ParticleHelp = (GenParticle*)TCP->At(0);
-	for (int it = 0; it < i_nt; ++it)
-	{
-		if ( (t_infos(it,3)==22) && (abs(t_infos(it,4))==4  ||  abs(t_infos(it,4))==2 ) )   
-		{
-			i_vertex_matched(1) = t_infos(it,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(1));
-			i_vertex_matched(0) = P_ParticleHelp->D1;
-			i_vertex_matched(2) = P_ParticleHelp->D2;
-			matched_t = true;
-		}
-		if ( (t_infos(it,4)==22) && (abs(t_infos(it,3))==4  ||  abs(t_infos(it,3))==2 ) )
-		{
-			i_vertex_matched(1) = t_infos(it,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(1));
-			i_vertex_matched(0) = P_ParticleHelp->D2;
-			i_vertex_matched(2) = P_ParticleHelp->D1;
-			matched_t = true;
-		}
-		if ( (t_infos(it,4)==24) && abs(t_infos(it,3))==5)
-		{
-			i_vertex_matched(3) = t_infos(it,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(3));
-			i_vertex_matched(4) = P_ParticleHelp->D1;
-			i_vertex_matched(5) = P_ParticleHelp->D2;
-			matched_b = true;
-		}
-		if ( (t_infos(it,3)==24) && abs(t_infos(it,4))==5)
-		{
-			i_vertex_matched(3) = t_infos(it,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(3));
-			i_vertex_matched(4) = P_ParticleHelp->D2;
-			i_vertex_matched(5) = P_ParticleHelp->D1;
-			matched_b = true;
-		}
-	}
-
-	if(!matched_t){//Falls t nicht so gefunden wird haben wir wohl ein up was nach t gamma geht
-	for (int iu = 0; iu < i_nu; ++iu)
-	{
-		if ( (u_infos(iu,3)==22) && (abs(u_infos(iu,4))==6) )   
-		{
-			i_vertex_matched(2) = u_infos(iu,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(2));
-			i_vertex_matched(0) = P_ParticleHelp->D1;
-			i_vertex_matched(1) = P_ParticleHelp->D2;
-			matched_u = true;
-		}
-		if ( (u_infos(iu,4)==22) && (abs(u_infos(iu,3))==6) )
-		{
-			i_vertex_matched(2) = u_infos(iu,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(2));
-			i_vertex_matched(0) = P_ParticleHelp->D2;
-			i_vertex_matched(1) = P_ParticleHelp->D1;
-			matched_u = true;
-		}
-	}
-	}
-	if(!matched_t && !matched_u){
-	for (int ig = 0; ig < i_ng; ++ig)
-	{
-/*		if((abs(g_infos(ig,3)==6))){cout << "hallo1" << endl; cout << abs(g_infos(ig,3)) << endl;}
-		if((abs(g_infos(ig,4))==4) || (abs(g_infos(ig,4))==2)){cout << "hallo2" << endl; cout << abs(g_infos(ig,4)) << endl;}
-*/		if ( (abs(g_infos(ig,3))==6) && ( (abs(g_infos(ig,4))==4) || (abs(g_infos(ig,4))==2) ) )   
-		{
-			i_vertex_matched(7) = g_infos(ig,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(7));
-			i_vertex_matched(1) = P_ParticleHelp->D1;
-			i_vertex_matched(2) = P_ParticleHelp->D2;
-			matched_g = true;
-		}
-		if ( abs((g_infos(ig,4))==6) && ( (abs(g_infos(ig,3))==4) || (abs(g_infos(ig,3))==2) ) )
-		{
-			i_vertex_matched(7) = g_infos(ig,5);
-			P_ParticleHelp = (GenParticle*)TCP->At(i_vertex_matched(7));
-			i_vertex_matched(1) = P_ParticleHelp->D2;
-			i_vertex_matched(2) = P_ParticleHelp->D1;
-			matched_g = true;
-		}
-	}
-	for (int igam = 0; igam < i_ngam; ++igam)
-	{
-		if ( (abs(gam_infos(igam,1))==21  ||  abs(gam_infos(igam,1))==9 ) || (abs(gam_infos(igam,2))==21  ||  abs(gam_infos(igam,2))==9 ) )   
-		{
-			i_vertex_matched(0) = gam_infos(igam,5);
-		}
-	}
-	}
-	if(matched_u && error != 0)cout << "Up gemached" << endl;
-	if(matched_t && error != 0)cout << "Top gemached" << endl;
-	if(matched_g && error != 0)cout << "Gluon gemached" << endl;
-	if(matched_t || matched_u || matched_g){i_vertex_matched(6)=1;}else{i_vertex_matched(6)=0;}
-	if(matched_b){i_vertex_matched(7)=1;}else{i_vertex_matched(7)=0;}
-	return i_vertex_matched;
-}
-
 
 
 TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[])
