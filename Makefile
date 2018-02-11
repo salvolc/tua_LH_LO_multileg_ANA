@@ -37,12 +37,34 @@ all: $(PRO) $(OOBJ) $(plots)
 $(PRO): *.cpp $(OOBJ)
 	g++ $^ -o $@ -fopenmp $(CXXFLAGS) $(LIBS)
 
-$(plots): $(PRO) aufgabe.py
+$(plots): $(PRO) truth.py delph.py
 	./$(PRO)
-	python3.5 aufgabe.py >> pyout
+	python3.5 truth.py >> pyout
+	python3.5 delph.py >> dpyout
 
-py: aufgabe.py
-	python3.5 aufgabe.py >> pyout
+truthl: truth.cpp
+	g++ truth.cpp -o truth -fopenmp $(CXXFLAGS) $(LIBS)
+	./truth
+
+delphl: delph.cpp
+	g++ delph.cpp -o delph -fopenmp $(CXXFLAGS) $(LIBS)
+	./delph
+
+truth: truth.cpp truth.py
+	g++ truth.cpp -o truth -fopenmp $(CXXFLAGS) $(LIBS)
+	./truth
+	python3.5 truth.py >> pyout
+
+delph: delph.cpp delph.py
+	g++ delph.cpp -o delph -fopenmp $(CXXFLAGS) $(LIBS)
+	./delph
+	python3.5 delph.py >> dpyout
+
+tpy: truth.py
+	python3.5 truth.py >> pyout
+
+dpy: delph.py
+	python3.5 delph.py >> dpyout
 
 light: $(PRO)
 	./$(PRO)

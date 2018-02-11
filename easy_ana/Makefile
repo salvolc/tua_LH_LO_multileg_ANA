@@ -4,20 +4,21 @@
 ROOTCFLAGS   := $(shell root-config --cflags)
 ROOTLIBS     := -lMinuit $(shell root-config --libs)
 ROOTTEST	 := -I$(shell root-config --prefix)/test
-EXROOT = -L/home/salv/Dokumente/Masterarbeit/MadGraph/MG5_aMC_v2_6_0/ExRootAnalysis/ -lExRootAnalysis
+EXROOT = -L/home/salv/Dokumente/Masterarbeit/MG1/ExRootAnalysis/ -lExRootAnalysis
 
-DELPHES = -L/home/salv/Dokumente/Masterarbeit/MadGraph/Delphes-3.4.1/ -lDelphes
+DELPHES = -L/home/salv/Dokumente/Masterarbeit/Delphes/ -lDelphes
 
 # Root variables (.local) 
 # ROOTCFLAGS :=
 # ROOTLIBS := 
 
-CXXFLAGS     =  -g -Wall -fPIC -Wno-deprecated -ggdb
+CXXFLAGS  =  -g -Wall -fPIC -Wno-deprecated -ggdb
 CXXFLAGS    += $(ROOTCFLAGS) $(ROOTTEST) 
-CXXFLAGS    += -I. -I./include -I/home/salv/Dokumente/Masterarbeit/MadGraph/MG5_aMC_v2_6_0/ExRootAnalysis/ExRootAnalysis -I/home/salv/Dokumente/Masterarbeit/MadGraph/Delphes-3.4.1/
+CXXFLAGS    += -I. -I./include -I/home/salv/Dokumente/Masterarbeit/MG1/ExRootAnalysis/ -I/home/salv/Dokumente/Masterarbeit/MG1/ExRootAnalysis/ExRootAnalysis -I/home/salv/Dokumente/Masterarbeit/Delphes/
 LIBS 		= $(ROOTLIBS) -L./ -lTreePlayer -lMinuit $(EXROOT) $(DELPHES)
 #--------------------------------------------------------------------
-plots = ../plots/Photon_truth/tua_RH_Photon_PT.pdf 
+plots = plots/test.pdf
+pres = Presentation.pdf
 SRC = $(wildcard *.cxx)
 #$(info $$plots is [${plots}])
 OOBJ = $(SRC:%.cxx=%.o)
@@ -27,7 +28,8 @@ EX = $(wildcard *.cpp)
 PRO = $(EX:%.cpp=%)
 #$(info $$PRO is [${PRO}])
 
-all: $(PRO) $(OOBJ) $(plots) $(pres)
+all: $(PRO) $(OOBJ) $(plots) 
+# $(pres)
 
 %.o: %.cxx %.h
 	g++ -c $< -o $@ $(CXXFLAGS)
@@ -37,10 +39,10 @@ $(PRO): *.cpp $(OOBJ)
 
 $(plots): $(PRO) aufgabe.py
 	./$(PRO)
-	python3.5 aufgabe.py
+	python3.5 aufgabe.py >> pyout
 
 py: aufgabe.py
-	python3.5 aufgabe.py
+	python3.5 aufgabe.py >> pyout
 
 light: $(PRO)
 	./$(PRO)
@@ -49,6 +51,14 @@ vertex:
 	g++ vertex.cpp -o vertex -fopenmp $(CXXFLAGS) $(LIBS)
 	./vertex
 
+pres:
+	cd Vortrag/ && make
+	cp Vortrag/build/Presentation.pdf ./
+
+pp:
+	python3.5 aufgabe.py
+	cd Vortrag/ && make
+	cp Vortrag/build/Presentation.pdf ./
 
 #aufgabe: aufgabe.cpp
 
@@ -60,5 +70,6 @@ vertex:
 
 
 clean:
-	@rm -rf $(OOBJ) $(PRO) 
+	@rm ./data/*
+	@rm ./plots/*/*
 
