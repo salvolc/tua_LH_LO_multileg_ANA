@@ -1,0 +1,5 @@
+Events: 49633
+Eff Lepton Cut: 57.6572%
+Eff Eta Cut: 45.0688%
+Eff Mass Cut: 32.8612%
+Eff Weight Cut: 17.4319%

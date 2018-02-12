@@ -70,16 +70,16 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_multileg_LO_tt_wbau.root";
+	string fileName = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
 	int nEvents = get_nevents(fileName);
 	MatrixXd ev = get_eventdisplay(fileName,1);
 	speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decay_LO_tt_wbua_lept_PY8_DELATL_50.root";
-	fileNames[1] = "samples/tua_LH_interference_ta_taj_wlep_PY8_DELATL_50.root";
-	fileNames[2] = "samples/tua_LH_production_LO_multileg_ta_taj.root";
+	fileNames[0] = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	fileNames[1] = "samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
+	fileNames[2] = "samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
 
 	string filePPTNames[3];filePPTNames[0] = "data/dec_Photon_PT";filePPTNames[1] = "data/int_Photon_PT";filePPTNames[2] = "data/pro_Photon_PT";
 	string filePEtaNames[3];filePEtaNames[0] = "data/dec_Photon_Eta";filePEtaNames[1] = "data/int_Photon_Eta";filePEtaNames[2] = "data/pro_Photon_Eta";
@@ -157,8 +157,8 @@ int main(int argc, char const *argv[])
 		
 		//TFile* file = new TFile(fileNames[iFile].c_str(),"READ");
 		//TTree* tree = (TTree*)file->Get("Delphes");
-		files[iFile] = new TFile(fileNames[iFile].c_str(),"READ");
-		TTree* tree = (TTree*)files[iFile]->Get("Delphes");
+		files[iFile] 		= new TFile(fileNames[iFile].c_str(),"READ");
+		TTree* 		tree 	= (TTree*)files[iFile]->Get("Delphes");
 
 		
 		TBranch *bE 		= tree->GetBranch("Event");
@@ -176,6 +176,7 @@ int main(int argc, char const *argv[])
 		TClonesArray *TCElectron= 0;
 		TClonesArray *TCMuon 	= 0;
 		TClonesArray *TCMET 	= 0;
+		TClonesArray *TCE 		= 0;
 
 
 		bP->SetAddress(&TCP);
@@ -184,6 +185,7 @@ int main(int argc, char const *argv[])
 		bElectron->SetAddress(&TCElectron);
 		bMuon->SetAddress(&TCMuon);
 		bMET->SetAddress(&TCMET);
+		bE->SetAddress(&TCE);
 
 
 		int nEvents = get_nevents(fileNames[iFile].c_str());
@@ -205,20 +207,35 @@ int main(int argc, char const *argv[])
 		VectorXd VPhoton_TopQuark_R = VectorXd::Zero(nEvents);VectorXd VPhoton_bQuark_R = VectorXd::Zero(nEvents);VectorXd VPhoton_WBoson_R = VectorXd::Zero(nEvents);VectorXd VPhoton_LedJet_R = VectorXd::Zero(nEvents);
 		VectorXd VPhoton_TopQuark_M = VectorXd::Zero(nEvents);VectorXd VPhoton_bQuark_M = VectorXd::Zero(nEvents);VectorXd VPhoton_WBoson_M = VectorXd::Zero(nEvents);VectorXd VPhoton_LedJet_M = VectorXd::Zero(nEvents);
 
+		VectorXd VWeight = VectorXd::Zero(nEvents);
+		
 		//int NPhotons = 0;
 		//int NbJets = 0;
 		//int numberOfPhotons = get_numberOfPhotons(fileNames[iFile].c_str());
 		//int numberOfbJets = get_numberOfbJets(fileNames[iFile].c_str());
 
-		int i = 0;
+		int iE 	 = 0;
+		int iELe = 0;
+		int iEta = 0;
+		int iMas = 0;
+		int iWei = 0;
 		for (int iEvent = 0; iEvent < nEvents; ++iEvent)
 		{
+			//string a; cin >> a;
 			bP->GetEntry(iEvent);
 			bPhoton->GetEntry(iEvent);
 			bJet->GetEntry(iEvent);
 			bElectron->GetEntry(iEvent);
 			bMuon->GetEntry(iEvent);
 			bMET->GetEntry(iEvent);
+			bE->GetEntry(iEvent);
+
+			//####################################################
+			//####################Weight##########################
+			//####################################################
+
+			HepMCEvent *E_Event = (HepMCEvent*)TCE->At(0);
+			VWeight(iEvent) = E_Event->Weight;
 
 			//####################################################
 			//##############Photon Zeugs##########################
@@ -229,11 +246,8 @@ int main(int argc, char const *argv[])
 			for (int iPhoton = 0; iPhoton < nPhotons; ++iPhoton)
 			{
 				Photon *P_Photon = (Photon*)TCPhoton->At(iPhoton);
-				if (P_Photon->PT > VPhotonPT(iEvent))
+				if (P_Photon->PT > TV_Photon.Pt())
 				{
-					VPhotonPT(iEvent) = P_Photon->PT;
-					VPhotonEta(iEvent) = P_Photon->Eta;
-					VPhotonPhi(iEvent) = P_Photon->Phi;					
 					TV_Photon.SetPtEtaPhiE(P_Photon->PT,P_Photon->Eta,P_Photon->Phi,P_Photon->E);
 				}
 			}
@@ -255,22 +269,12 @@ int main(int argc, char const *argv[])
 			 	if(P_Jet->BTag == 1){
 			 		nbtags++;
 			 		if(TV_bJet.Pt() < P_Jet->PT){
-			 			VbJetPT(iEvent) = P_Jet->PT;
-	 					VbJetEta(iEvent) = P_Jet->Eta;
-	 					VbJetPhi(iEvent) = P_Jet->Phi;
-	 					VbJetM(iEvent) = P_Jet->Mass;
+						TV_bJet.SetPtEtaPhiM(P_Jet->PT,P_Jet->Eta,P_Jet->Phi,P_Jet->Mass);
 	 				}
-			 	}
-			 	else if(TV_Jet.Pt() < P_Jet->PT){
-			 		VJetPT(iEvent) = P_Jet->PT;
-			 		VJetEta(iEvent) = P_Jet->Eta;
-					VJetPhi(iEvent) = P_Jet->Phi;
-					VJetM(iEvent) = P_Jet->Mass;
+			 	}	else if(TV_Jet.Pt() < P_Jet->PT){
+					TV_Jet.SetPtEtaPhiM(P_Jet->PT,P_Jet->Eta,P_Jet->Phi,P_Jet->Mass);
 			 	}
 			}
-			TV_bJet.SetPtEtaPhiM(VbJetPT(iEvent),VbJetEta(iEvent),VbJetPhi(iEvent),VbJetM(iEvent));
-			TV_Jet.SetPtEtaPhiM(VJetPT(iEvent),VJetEta(iEvent),VJetPhi(iEvent),VJetM(iEvent));
-
 
 			//####################################################
 			//#########################Elektronen#################
@@ -283,60 +287,116 @@ int main(int argc, char const *argv[])
 			for (int iElectron = 0; iElectron < nElectrons; ++iElectron)
 			{
 				Electron* P_Electron = (Electron*)TCElectron->At(iElectron);
-				if (VLeptonPT(iEvent) < P_Electron->PT)
+				if (TV_Lepton.Pt() < P_Electron->PT)
 				{
-					VLeptonPT(iEvent) 	= P_Electron->PT;
-					VLeptonEta(iEvent)	= P_Electron->Eta;
-					VLeptonPhi(iEvent)	= P_Electron->Phi;
-					VLeptonM(iEvent)	= me;
+					TV_Lepton.SetPtEtaPhiM((P_Electron->PT),(P_Electron->Eta),(P_Electron->Phi),me);
 				}
 			}
 			for (int iMuon = 0; iMuon < nMuons; ++iMuon)
 			{
 				Muon* P_Muon = (Muon*)TCMuon->At(iMuon);
-				if (VLeptonPT(iEvent) < P_Muon->PT)
+				if (TV_Lepton.Pt() < P_Muon->PT)
 				{
-					VLeptonPT(iEvent) 	= P_Muon->PT;
-					VLeptonEta(iEvent)	= P_Muon->Eta;
-					VLeptonPhi(iEvent)	= P_Muon->Phi;
-					VLeptonM(iEvent)	= mmu;
+					TV_Lepton.SetPtEtaPhiM((P_Muon->PT),(P_Muon->Eta),(P_Muon->Phi),mmu);
 				}
 			}
 
-
 			//####################################################
-			//#########################MET########################
+			//#########################MET und W##################
 			//####################################################
-			if(nElectrons+nMuons==0)continue;
-			i++;
 			TLorentzVector TV_METp;
-			TLorentzVector TV_METn;
+			TLorentzVector TV_METm;
+			TLorentzVector TV_WBoson;
 			MissingET* P_MET = (MissingET*)TCMET->At(0);
-			VMET(iEvent) = P_MET->MET;
-			VMETPhi(iEvent) = P_MET->Phi;
-			VMETEta(iEvent) = P_MET->Eta;
 
-
-			double METEtap = acosh((mw*mw)/(2*VMET(iEvent)*VLeptonPT(iEvent))+cos(VMETPhi(iEvent)-VLeptonPhi(iEvent)))+VLeptonEta(iEvent);
-			double METEtam = -acosh((mw*mw)/(2*VMET(iEvent)*VLeptonPT(iEvent))+cos(VMETPhi(iEvent)-VLeptonPhi(iEvent)))+VLeptonEta(iEvent);
+			double arg = ((mw*mw)/(2*(P_MET->MET)*(TV_Lepton.Pt())))+cos((P_MET->Phi)-(TV_Lepton.Phi()));
+			if (arg < 1){arg = 1;}
+			double METEtap = acosh(arg)+VLeptonEta(iEvent);
+			double METEtam = -acosh(arg)+VLeptonEta(iEvent);
 			
 			//cout << METEtap << " " << METEtam << " " << VMETEta(iEvent) << endl;
-			TV_METp.SetPtEtaPhiE(P_MET->MET,P_MET->Eta,P_MET->Phi,P_MET->MET);
+			TV_METp.SetPtEtaPhiE(P_MET->MET,METEtap,P_MET->Phi,P_MET->MET);
+			TV_METm.SetPtEtaPhiE(P_MET->MET,METEtam,P_MET->Phi,P_MET->MET);
+
+			if(fabs(mw-(TV_Lepton+TV_METm).M())>fabs(mw-(TV_Lepton+TV_METp).M()))
+			{
+				TV_WBoson = TV_Lepton+TV_METp;
+			} else {
+				TV_WBoson = TV_Lepton+TV_METm;
+			}
 
 
 			//####################################################
 			//##################Top Reco Zeugs E##################
 			//####################################################
 
-/*			TLorentzVector TV_top;
-			if(nJets >= 3 && nJets <= 6 && nMuons+nElectrons==0 && nbtags == 1)
-			{
-				TV_top = TV_W+TV_bJet;
-				t_M(iEvent)=TV_top.M();
-				t_PT(iEvent)=TV_top.Pt();
-			}*/
+			TLorentzVector TV_Top;
+			TV_Top = TV_WBoson+TV_bJet;
+
+			iE++;
+			if(nElectrons+nMuons==0){continue;}
+			iELe++;
+			if(fabs(TV_Jet.Eta())>2.5 || fabs(TV_bJet.Eta())>2.5){continue;}
+			iEta++;
+			if(TV_WBoson.M() <= 0 || TV_Top.M() <= 0){continue;}
+			iMas++;
+			if(VWeight(iEvent)==0){continue;}
+			iWei++;
+
+			//####################################################
+			//#######################Saving#######################
+			//####################################################
+
+			VPhotonPT(iEvent) 	= 	TV_Photon.Pt();
+			VPhotonEta(iEvent) 	= 	TV_Photon.Eta();
+			VPhotonPhi(iEvent) 	= 	TV_Photon.Phi();					
+
+			VTopQuarkM(iEvent)	=	TV_Top.M();
+			VTopQuarkPT(iEvent)	=	TV_Top.Pt();
+			VTopQuarkEta(iEvent)=	TV_Top.Eta();
+			VTopQuarkPhi(iEvent)=	TV_Top.Phi();
+			
+			VMET(iEvent) 		= 	P_MET->MET;
+			VMETPhi(iEvent) 	= 	P_MET->Phi;
+			VMETEta(iEvent) 	= 	P_MET->Eta;
+
+			VWBosonPT(iEvent)	=	TV_WBoson.Pt();
+			VWBosonEta(iEvent)	=	TV_WBoson.Eta();
+			VWBosonPhi(iEvent)	=	TV_WBoson.Phi();
+			VWBosonM(iEvent)	=	TV_WBoson.M();
+
+			VLeptonPT(iEvent) 	=	TV_Lepton.Pt();
+			VLeptonEta(iEvent)	=	TV_Lepton.Eta();
+			VLeptonPhi(iEvent)	=	TV_Lepton.Phi();
+			VLeptonM(iEvent)	=	TV_Lepton.M();
+
+			VbJetPT(iEvent)		=	TV_bJet.Pt();
+			VbJetEta(iEvent)	=	TV_bJet.Eta();
+			VbJetPhi(iEvent)	=	TV_bJet.Phi();
+			VbJetM(iEvent)		=	TV_bJet.M();
+
+			VJetPT(iEvent)		=	TV_Jet.Pt();
+			VJetEta(iEvent)		=	TV_Jet.Eta();
+			VJetPhi(iEvent)		=	TV_Jet.Phi();
+			VJetM(iEvent)		=	TV_Jet.M();
+
+			VTopQuark_Photon_R(iEvent)	= TV_Top.DeltaR(TV_Photon);
+			VTopQuark_bQuark_R(iEvent)	= TV_Top.DeltaR(TV_bJet);
+			VTopQuark_WBoson_R(iEvent)	= TV_Top.DeltaR(TV_WBoson);
+			VTopQuark_LedJet_R(iEvent)	= TV_Top.DeltaR(TV_Jet);
+			VTopQuark_Photon_M(iEvent)	= (TV_Top+TV_Photon).M();
+			VTopQuark_bQuark_M(iEvent)	= (TV_Top+TV_bJet).M();
+			VTopQuark_WBoson_M(iEvent)	= (TV_Top+TV_WBoson).M();
+			VTopQuark_LedJet_M(iEvent)	= (TV_Top+TV_Jet).M();
+			VPhoton_TopQuark_R(iEvent)	= TV_Photon.DeltaR(TV_Top);
+			VPhoton_bQuark_R(iEvent)	= TV_Photon.DeltaR(TV_bJet);
+			VPhoton_WBoson_R(iEvent)	= TV_Photon.DeltaR(TV_WBoson);
+			VPhoton_LedJet_R(iEvent)	= TV_Photon.DeltaR(TV_Jet);
+			VPhoton_TopQuark_M(iEvent)	= (TV_Photon+TV_Top).M();
+			VPhoton_bQuark_M(iEvent)	= (TV_Photon+TV_bJet).M();
+			VPhoton_WBoson_M(iEvent)	= (TV_Photon+TV_WBoson).M();
+			VPhoton_LedJet_M(iEvent)	= (TV_Photon+TV_Jet).M();
 		}
-		cout << i << endl;
 		speichere(filePPTNames[iFile], VPhotonPT);
 		speichere(filePEtaNames[iFile],VPhotonEta);
 		speichere(filePPhiNames[iFile],VPhotonPhi);
@@ -359,16 +419,32 @@ int main(int argc, char const *argv[])
 		speichere(filetPRNames[iFile], VTopQuark_Photon_R);
 		speichere(filetbRNames[iFile], VTopQuark_bQuark_R);
 		speichere(filetWRNames[iFile], VTopQuark_WBoson_R);
+		speichere(filetjRNames[iFile], VTopQuark_LedJet_R);
 		speichere(filetPMNames[iFile], VTopQuark_Photon_M);
 		speichere(filetbMNames[iFile], VTopQuark_bQuark_M);
 		speichere(filetWMNames[iFile], VTopQuark_WBoson_M);
+		speichere(filetjMNames[iFile], VTopQuark_LedJet_M);
 		speichere(filePtRNames[iFile], VPhoton_TopQuark_R);
 		speichere(filePbRNames[iFile], VPhoton_bQuark_R);
 		speichere(filePWRNames[iFile], VPhoton_WBoson_R);
+		speichere(filePjRNames[iFile], VPhoton_LedJet_R);
 		speichere(filePtMNames[iFile], VPhoton_TopQuark_M);
 		speichere(filePbMNames[iFile], VPhoton_bQuark_M);
 		speichere(filePWMNames[iFile], VPhoton_WBoson_M);
+		speichere(filePjMNames[iFile], VPhoton_LedJet_M);
+		speichere(fileWeightNames[iFile], VWeight);
 
+
+		ofstream dat((fileNames[iFile]+"_Cut_Effs.txt").c_str());
+		dat.is_open();
+		dat << "Events: " << iE << "\n";
+		dat << "Eff Lepton Cut: " << ((float(iELe)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Eta Cut: " << ((float(iEta)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Mass Cut: " << ((float(iMas)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Weight Cut: " << ((float(iWei)/float(iE))*100) << "%" << "\n";
+		dat.close();
+
+		cout << iE << endl;
 
 		files[iFile]->Close();
 		//file->Close();

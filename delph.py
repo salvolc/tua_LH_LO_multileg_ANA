@@ -21,12 +21,12 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 
 
 ###################################################################################################
-########################################TRUTH PLOTS################################################
+########################################DELPH PLOTS################################################
 ###################################################################################################
 
 samples = ["dec","int","pro"]
 vari = ["PT","Eta","Phi","M"]
-part = ["TopQuark","Photon","BQuark","WBoson","UQuark"]
+part = ["TopQuark","Photon","bJet","Jet","WBoson"]
 #vgle = ["LH vs RH" , "$tuγ$ vs. $tcγ$"]
 #utyp = ["tua","tca"]
 #hand = ["LH","RH"]
@@ -40,19 +40,21 @@ for i in range(len(datas)):
 		ntruth += 1
 
 for par in part:
-	if(par+"_truth" not in os.listdir(PREFIX+"plots/")):
+	if(par not in os.listdir(PREFIX+"plots/")):
 		os.chdir(PREFIX+"plots/")
-		os.mkdir(par+"_truth/")
+		os.mkdir(par)
 		os.chdir(PREFIX)
 
-topmassup=180
-topmassdown=165
+topmassup=250
+topmassdown=110
 bmassup=5.2
 bmassdown=3.2
 umassup=1
 umassdown=0
 wmassup=95
 wmassdown=65
+jmassdown=0
+jmassup=60
 
 default_range_up=800
 default_range_down=0
@@ -83,14 +85,23 @@ for sam in samples:
 				nbin=default_nbins
 			if((sam=="pro") | (sam=="int")):
 				upper_range=800
+			if(par == "TopQuark" and var=="PT"):
+				upper_range=default_range_up
+				lower_range=default_range_down
+				nbin=64
 			if (var == "Eta" or var == "Phi"):
 				lower_range=-5
 				upper_range=5
 				nbin = 32
 				up_l = 0
-			if(var=="M"):
-				nbin=mass_nbins
+			if (var == "Eta" and (par=="Photon" or par=="bJet" or par=="Jet")):
+				lower_range=-2.5
+				upper_range=2.5
+				nbin = 32
 				up_l = 0
+			if(var=="M"):
+				up_l=0
+				nbin=mass_nbins
 				if("W" in par):
 					lower_range=wmassdown
 					upper_range=wmassup
@@ -103,20 +114,22 @@ for sam in samples:
 				if("UQuark" in par):
 					lower_range=umassdown
 					upper_range=umassup
+				if("Jet" in par):
+						lower_range=jmassdown
+						upper_range=jmassup
 			if(var=="PT"):
 				if("BQuark" in par):
 					upper_range=500
 
-			ev = np.genfromtxt("data/"+sam+"_"+par+"_"+var+"_truth.txt")
+			ev = np.genfromtxt("data/"+sam+"_"+par+"_"+var+".txt")
 			ev = ev[(np.abs(ev)>up_l) & (ev!=999.9)]
 			print(len(ev[(np.abs(ev)>up_l) & (ev!=999.9)]))
-			print("data/"+sam+"_"+par+"_"+var+"_truth.txt")
+			print("data/"+sam+"_"+par+"_"+var+".txt")
 			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-			binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-			binning = np.array([-1000,*binning,1000])
+			ev = np.clip(ev, lower_range, upper_range)
 
-			n,bins,a = plt.hist(ev,label=sam,bins=binning,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+			n,bins,a = plt.hist(ev,label=sam,bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 			plt.xlim(lower_range,upper_range)
 			plot_error_region2(n, np.sqrt(n), bins,"blue")
 
@@ -129,26 +142,26 @@ for sam in samples:
 			plt.legend(loc="best")
 			if ("dec" in sam):
 				plt.title(var+"("+par+") decaymode")
-				plt.savefig("plots/"+par+"_truth/"+"decaymode"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
+				plt.savefig("plots/"+par+"/"+"decaymode"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 				plt.close()
 			if ("int" in sam):
 				plt.title(var+"("+par+") interference")
-				plt.savefig("plots/"+par+"_truth/"+"interference"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
+				plt.savefig("plots/"+par+"/"+"interference"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 				plt.close()
 			if ("pro" in sam):
 				plt.title(var+"("+par+") production")
-				plt.savefig("plots/"+par+"_truth/"+"production"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
+				plt.savefig("plots/"+par+"/"+"production"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 				plt.close()
 
 
-topmassup=180
-topmassdown=165
+topmassup=800
+topmassdown=0
 bmassup=5.2
 bmassdown=3.2
 umassup=1
 umassdown=0
-wmassup=95
-wmassdown=65
+wmassup=500
+wmassdown=0
 
 default_range_up=800
 default_range_down=0
@@ -170,13 +183,18 @@ for par in part:
 
 		if(par == "Photon" and var=="M"):
 			continue
-		if(par == "Photon" and var=="PT"):
-			upper_range=default_range_up
-			lower_range=default_range_down
-			nbin=default_nbins
+		if(var=="PT"):
+			nbin=64
+			if(par=="Jet"):
+				lower_range=20
 		if (var == "Eta" or var == "Phi"):
 			lower_range=-5
 			upper_range=5
+			nbin = 32
+			up_l = 0
+		if (var == "Eta" and (par=="Photon" or par=="bJet" or par=="Jet")):
+			lower_range=-2.5
+			upper_range=2.5
 			nbin = 32
 			up_l = 0
 		if(var=="M"):
@@ -194,64 +212,67 @@ for par in part:
 			if("UQuark" in par):
 				lower_range=umassdown
 				upper_range=umassup
+			if("Jet" in par):
+					lower_range=jmassdown
+					upper_range=jmassup
 		if(var=="PT"):
 			if("BQuark" in par):
 				upper_range=500
 
 
-		evp = np.genfromtxt("data/pro_"+par+"_"+var+"_truth.txt")
-		evd = np.genfromtxt("data/dec_"+par+"_"+var+"_truth.txt")
-		evi = np.genfromtxt("data/int_"+par+"_"+var+"_truth.txt")
+		evp = np.genfromtxt("data/pro_"+par+"_"+var+".txt")
+		evd = np.genfromtxt("data/dec_"+par+"_"+var+".txt")
+		evi = np.genfromtxt("data/int_"+par+"_"+var+".txt")
 		evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 		evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)]
 		evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)]
 		ev = np.concatenate((evp, evd), axis=0)
 		#print(par+var)
+		ev = np.clip(ev, lower_range, upper_range)
+		evi = np.clip(evi, lower_range, upper_range)
 
-		binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-		binning = np.array([-1000,*binning,1000])
-		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
-		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+
+		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=vbins,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 		plt.close()
 
 		plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
-		
-		n,bins,a = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(n,1/np.sqrt(vn)*n, bins,"blue")
-		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
 		
 		ax = plt.gca()
 		ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 		plt.grid(alpha=0.5)
-		plt.xlim(lower_range,upper_range+0.0001*upper_range)
+		plt.xlim(lower_range,upper_range)
 		plt.xlabel(r"$"+var+"("+par+")"+r"$")
 		plt.ylabel("N")
 		plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 		plt.legend(loc="best")
 		plt.title(var+"("+par+") all")
-		plt.savefig("plots/"+par+"_truth/"+"all"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
+		plt.savefig("plots/"+par+"/"+"all"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
 
 
 
 
-if("R_truth" not in os.listdir(PREFIX+"plots/")):
+if("R" not in os.listdir(PREFIX+"plots/")):
 	os.chdir(PREFIX+"plots/")
-	os.mkdir("R_truth/")
+	os.mkdir("R/")
 	os.chdir(PREFIX)
 
-if("M_truth" not in os.listdir(PREFIX+"plots/")):
+if("M" not in os.listdir(PREFIX+"plots/")):
 	os.chdir(PREFIX+"plots/")
-	os.mkdir("M_truth/")
+	os.mkdir("M")
 	os.chdir(PREFIX)
 
 		
 var=["R","M"]
 RMPart=["Photon","TopQuark"]
-RMPartP=["Photon","TopQuark","BQuark","WBoson"]
+RMPartP=["Photon","TopQuark","BQuark","WBoson","LeadingJet"]
 
-up_l=0.01
+up_l=0.001
 
 for sam in samples:
 	for va in var:
@@ -262,43 +283,52 @@ for sam in samples:
 
 				if va == "R":
 					lower_range = 0
-					upper_range = 7
+					upper_range = 5
 					nbin = 32
+					if p1 == "TopQuark" and p2 == "WBoson":
+						lower_range = 0
+						upper_range = 5
 				if va == "M":
 					lower_range = 0
 					if p1 =="Photon":
 						lower_range = 0
 						upper_range = 1400
 						if p2 == "TopQuark":
-							lower_range = 150
-							upper_range = 800
+							lower_range = 0
+							upper_range = 1400
+						if p2 == "LeadingJet":
+							lower_range = 0
+							upper_range = 400
+						if p2 == "BQuark":
+							lower_range = 0
+							upper_range = 400
 					if p1 =="TopQuark":
-						lower_range = 150
-						upper_range = 500
+						lower_range = 0
+						upper_range = 800
 						if p2 == "WBoson":
-							lower_range = 200
+							lower_range = 50
 						if p2 == "Photon":
-							lower_range = 150
-							upper_range = 800
+							lower_range = 0
+							upper_range = 1400
+						if p2 == "LeadingJet":
+							upper_range = 1200
 					nbin = 64
 
-				ev = np.genfromtxt("data/"+sam+"_"+p1+"_"+p2+"_"+va+"_truth.txt")
+				ev = np.genfromtxt("data/"+sam+"_"+p1+"_"+p2+"_"+va+".txt")
 				ev = ev[(np.abs(ev)>up_l) & (ev!=999.9)]
 
 				print(len(ev[(np.abs(ev)>up_l) & (ev!=999.9)]))
-				print("data/"+sam+"_"+p1+"_"+p2+"_"+va+"_truth.txt")
+				print("data/"+sam+"_"+p1+"_"+p2+"_"+va+".txt")
 
 				fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-				binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-				binning = np.array([-10000,*binning,10000])
-
-				n,bins,a = plt.hist(ev,label=sam,lw=0.5,color="blue",bins=binning,fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
+				ev = np.clip(ev, lower_range, upper_range)
+				n,bins,a = plt.hist(ev,label=sam,lw=0.5,color="blue",bins=nbin,fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
 				plot_error_region2(n, np.sqrt(n), bins,"blue")
 
 				ax = plt.gca()
 				ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-				plt.xlim(lower_range,upper_range+0.01*upper_range)
+				plt.xlim(lower_range,upper_range)
 				plt.grid(alpha=0.5)
 				plt.xlabel(r"$"+va+"("+p1+" "+p2+")"+r"$")
 				plt.ylabel("N")
@@ -306,15 +336,15 @@ for sam in samples:
 				plt.legend(loc="best")
 				if ("dec" in sam):
 					plt.title(va+"("+p1+"_"+p2+") decaymode")
-					plt.savefig("plots/"+va+"_truth/"+"decaymode"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+					plt.savefig("plots/"+va+"/"+"decaymode"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 					plt.close()
 				if ("int" in sam):
 					plt.title(va+"("+p1+"_"+p2+") interference")
-					plt.savefig("plots/"+va+"_truth/"+"interference"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+					plt.savefig("plots/"+va+"/"+"interference"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 					plt.close()
 				if ("pro" in sam):
 					plt.title(va+"("+p1+"_"+p2+") production")
-					plt.savefig("plots/"+va+"_truth/"+"production"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+					plt.savefig("plots/"+va+"/"+"production"+"_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 					plt.close()
 
 
@@ -329,29 +359,40 @@ for va in var:
 
 			if va == "R":
 				lower_range = 0
-				upper_range = 7
+				upper_range = 5
 				nbin = 32
+				if p1 == "TopQuark" and p2 == "WBoson":
+					lower_range = 0
+					upper_range = 4
 			if va == "M":
 				lower_range = 0
 				if p1 =="Photon":
 					lower_range = 0
 					upper_range = 1400
 					if p2 == "TopQuark":
-						lower_range = 150
-						upper_range = 800
+						lower_range = 0
+						upper_range = 1400
+					if p2 == "LeadingJet":
+						lower_range = 0
+						upper_range = 400
+					if p2 == "BQuark":
+						lower_range = 0
+						upper_range = 400
 				if p1 =="TopQuark":
-					lower_range = 150
-					upper_range = 500
+					lower_range = 0
+					upper_range = 800
 					if p2 == "WBoson":
-						lower_range = 200
+						lower_range = 50
 					if p2 == "Photon":
-						lower_range = 150
-						upper_range = 800
+						lower_range = 0
+						upper_range = 1400
+					if p2 == "LeadingJet":
+						upper_range = 1200
 				nbin = 64
 
-			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+"_truth.txt")
+			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+".txt")
+			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+".txt")
+			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+".txt")
 			evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 			evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)]
 			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)]
@@ -359,29 +400,30 @@ for va in var:
 
 			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-			binning = np.arange(lower_range,upper_range+0.1,(upper_range-lower_range)/nbin)
-			binning = np.array([-10000,*binning,10000])
+			ev = np.clip(ev, lower_range, upper_range)
+			evi = np.clip(evi, lower_range, upper_range)
 
 
-			#vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
-			#vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
+			vn2,vbins2,va2 = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
+			vnI2,vbinsI2,vaI2 = plt.hist(evi,label=r"interference",bins=vbins2,lw=0.5,color="red",fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
 			plt.close()
 
 			plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 			
-			n,bins,a = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=True,histtype='step')#,range=(lower_range,upper_range))
-			#plot_error_region2(n,1/np.sqrt(vn)*n, bins,"blue")
-			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=True,histtype='step')#,range=(lower_range,upper_range))
-			#plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
+			n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),histtype='step')#,range=(lower_range,upper_range))
+			plot_error_region2(n,1/np.sqrt(vn2)*n, bins,"blue")
+			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=bins,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
+			plot_error_region2(nI,1/np.sqrt(vnI2)*nI, binsI,"red")
 
 			ax = plt.gca()
 			ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-			plt.xlim(lower_range,upper_range+0.01*upper_range)
+			plt.xlim(lower_range,upper_range)
+
 			plt.legend(loc='best')
 			plt.grid(alpha=0.5)
 			plt.xlabel(r"$"+va+"("+p1+" "+p2+")"+r"$")
 			plt.ylabel("N")
 			plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 			plt.title(va+"("+p1+"_"+p2+") interference")
-			plt.savefig("plots/"+va+"_truth/"+"all_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+			plt.savefig("plots/"+va+"/"+"all_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()

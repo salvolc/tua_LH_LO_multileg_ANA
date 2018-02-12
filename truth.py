@@ -113,10 +113,8 @@ for sam in samples:
 			print("data/"+sam+"_"+par+"_"+var+"_truth.txt")
 			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-			binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-			binning = np.array([-1000,*binning,1000])
-
-			n,bins,a = plt.hist(ev,label=sam,bins=binning,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+			ev = np.clip(ev, lower_range, upper_range)
+			n,bins,a = plt.hist(ev,label=sam,bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 			plt.xlim(lower_range,upper_range)
 			plot_error_region2(n, np.sqrt(n), bins,"blue")
 
@@ -207,24 +205,23 @@ for par in part:
 		evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)]
 		ev = np.concatenate((evp, evd), axis=0)
 		#print(par+var)
-
-		binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-		binning = np.array([-1000,*binning,1000])
-		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
-		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+		ev = np.clip(ev, lower_range, upper_range)
+		evi = np.clip(evi, lower_range, upper_range)
+		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
+		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 		plt.close()
 
 		plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 		
-		n,bins,a = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(n,1/np.sqrt(vn)*n, bins,"blue")
-		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=True,range=(lower_range,upper_range),histtype='step')
+		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
 		
 		ax = plt.gca()
 		ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 		plt.grid(alpha=0.5)
-		plt.xlim(lower_range,upper_range+0.0001*upper_range)
+		plt.xlim(lower_range,upper_range)
 		plt.xlabel(r"$"+var+"("+par+")"+r"$")
 		plt.ylabel("N")
 		plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -290,15 +287,13 @@ for sam in samples:
 
 				fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-				binning = np.arange(lower_range,upper_range+0.001,(upper_range-lower_range)/nbin)
-				binning = np.array([-10000,*binning,10000])
-
-				n,bins,a = plt.hist(ev,label=sam,lw=0.5,color="blue",bins=binning,fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
+				ev = np.clip(ev, lower_range, upper_range)
+				n,bins,a = plt.hist(ev,label=sam,lw=0.5,color="blue",bins=nbin,fill=False,normed=False,histtype='step',range=(lower_range,upper_range))
 				plot_error_region2(n, np.sqrt(n), bins,"blue")
 
 				ax = plt.gca()
 				ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-				plt.xlim(lower_range,upper_range+0.01*upper_range)
+				plt.xlim(lower_range,upper_range)
 				plt.grid(alpha=0.5)
 				plt.xlabel(r"$"+va+"("+p1+" "+p2+")"+r"$")
 				plt.ylabel("N")
@@ -359,24 +354,23 @@ for va in var:
 
 			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-			binning = np.arange(lower_range,upper_range+0.1,(upper_range-lower_range)/nbin)
-			binning = np.array([-10000,*binning,10000])
-
-			vn2,vbins2,va2 = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=False,histtype='step')
+			ev = np.clip(ev, lower_range, upper_range)
+			evi = np.clip(evi, lower_range, upper_range)
+			vn2,vbins2,va2 = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,histtype='step')
 			#vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=False,histtype='step')#,range=(lower_range,upper_range))
-			vnI2,vbinsI2,vaI2 = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=False,histtype='step')#,range=(lower_range,upper_range))
+			vnI2,vbinsI2,vaI2 = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,normed=False,histtype='step')#,range=(lower_range,upper_range))
 			plt.close()
 
 			plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 			
-			n,bins,a = plt.hist(ev,label=r"production+decay",bins=binning,lw=0.5,color="blue",fill=False,normed=True,histtype='step')#,range=(lower_range,upper_range))
+			n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),histtype='step')#,range=(lower_range,upper_range))
 			plot_error_region2(n,1/np.sqrt(vn2)*n, bins,"blue")
-			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=binning,lw=0.5,color="red",fill=False,normed=True,histtype='step')#,range=(lower_range,upper_range))
-			plot_error_region2(nI,1/np.sqrt(vnI2 )*nI, binsI,"red")
+			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
+			plot_error_region2(nI,1/np.sqrt(vnI2)*nI, binsI,"red")
 
 			ax = plt.gca()
 			ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-			plt.xlim(lower_range,upper_range+0.01*upper_range)
+			plt.xlim(lower_range,upper_range)
 			plt.legend(loc='best')
 			plt.grid(alpha=0.5)
 			plt.xlabel(r"$"+va+"("+p1+" "+p2+")"+r"$")

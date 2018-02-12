@@ -66,16 +66,16 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_multileg_LO_tt_wbau.root";
+	string fileName = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
 	int nEvents = get_nevents(fileName);
 	MatrixXd ev = get_eventdisplay(fileName,1);
 	speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decay_multileg_LO_tt_wbau.root";
-	fileNames[1] = "samples/tua_LH_interfernce_multileg_LO_ta_taj.root";
-	fileNames[2] = "samples/tua_LH_production_LO_multileg_ta_taj.root";
+	fileNames[0] = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	fileNames[1] = "samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
+	fileNames[2] = "samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
 
 	string fileTPPTNames[3];fileTPPTNames[0] = "data/dec_Photon_PT_truth";fileTPPTNames[1] = "data/int_Photon_PT_truth";fileTPPTNames[2] = "data/pro_Photon_PT_truth";
 	string fileTPEtaNames[3];fileTPEtaNames[0] = "data/dec_Photon_Eta_truth";fileTPEtaNames[1] = "data/int_Photon_Eta_truth";fileTPEtaNames[2] = "data/pro_Photon_Eta_truth";
