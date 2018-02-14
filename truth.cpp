@@ -128,7 +128,6 @@ int main(int argc, char const *argv[])
 
 	TFile* files[3];
 
-	#pragma omp parallel for
 	for (int iFile = 0; iFile < 3; ++iFile)
 	{
 		
@@ -140,7 +139,9 @@ int main(int argc, char const *argv[])
 		TBranch *bP 		= tree->GetBranch("Particle");
 		TBranch *bE 		= tree->GetBranch("Event");
 		TClonesArray *TCP 	= 0;
+		TClonesArray *TCE 	= 0;
 		bP->SetAddress(&TCP);
+		bE->SetAddress(&TCE);
 		bP->GetEntry(0);
 
 		int nEvents = get_nevents(fileNames[iFile].c_str());
@@ -166,6 +167,10 @@ int main(int argc, char const *argv[])
 			//if(debug){cout<<"Input Number for next Event"<<endl;string a;cin >> a;}
 
 			bP->GetEntry(iEvent);
+			bE->GetEntry(iEvent);
+
+			HepMCEvent *E_Event = (HepMCEvent*)TCE->At(0);
+			if (E_Event->Weight == 0){continue;}
 
 			int nParticles = TCP->GetEntries();
 

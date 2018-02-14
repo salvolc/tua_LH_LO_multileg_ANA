@@ -19,6 +19,80 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 	bins_m = (bins_a+bins_e)/2
 	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.5)
 
+def parameters_kin(sam,var,par):
+	topmassup=180
+	topmassdown=165
+	bmassup=5.2
+	bmassdown=3.2
+	umassup=1
+	umassdown=0
+	wmassup=95
+	wmassdown=65
+
+	default_range_up=800
+	default_range_down=0
+	default_nbins = 64
+
+	mass_nbins = 64
+
+	nbin = default_nbins
+	lower_range=default_range_down
+	upper_range=default_range_up
+	up_l = 0.1
+	if(par == "Photon" and var=="PT"):
+		upper_range=default_range_up
+		lower_range=default_range_down
+		nbin=default_nbins
+	if((sam=="pro") | (sam=="int")):
+		upper_range=800
+	if (var == "Eta" or var == "Phi"):
+		lower_range=-5
+		upper_range=5
+		nbin = 32
+		up_l = 0
+	if(var=="M"):
+		nbin=mass_nbins
+		up_l = 0
+		if("W" in par):
+			lower_range=wmassdown
+			upper_range=wmassup
+		if("Top" in par):
+			lower_range=topmassdown
+			upper_range=topmassup
+		if("BQuark" in par):
+			lower_range=bmassdown
+			upper_range=bmassup
+		if("UQuark" in par):
+			lower_range=umassdown
+			upper_range=umassup
+	if(var=="PT"):
+		if("BQuark" in par):
+			upper_range=500
+	return [lower_range,upper_range,nbin,up_l]
+
+def parameters_RM(p1,p2,va):
+	if va == "R":
+		lower_range = 0
+		upper_range = 7
+		nbin = 32
+	if va == "M":
+		lower_range = 0
+		if p1 =="Photon":
+			lower_range = 0
+			upper_range = 1400
+			if p2 == "TopQuark":
+				lower_range = 150
+				upper_range = 800
+		if p1 =="TopQuark":
+			lower_range = 150
+			upper_range = 500
+			if p2 == "WBoson":
+				lower_range = 200
+			if p2 == "Photon":
+				lower_range = 150
+				upper_range = 800
+		nbin = 64
+	return [lower_range,upper_range,nbin,up_l]
 
 ###################################################################################################
 ########################################TRUTH PLOTS################################################
@@ -27,9 +101,7 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 samples = ["dec","int","pro"]
 vari = ["PT","Eta","Phi","M"]
 part = ["TopQuark","Photon","BQuark","WBoson","UQuark"]
-#vgle = ["LH vs RH" , "$tuγ$ vs. $tcγ$"]
-#utyp = ["tua","tca"]
-#hand = ["LH","RH"]
+
 PREFIX = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))+"/"
 
 datas = os.listdir(PREFIX+"data")
@@ -45,75 +117,29 @@ for par in part:
 		os.mkdir(par+"_truth/")
 		os.chdir(PREFIX)
 
-topmassup=180
-topmassdown=165
-bmassup=5.2
-bmassdown=3.2
-umassup=1
-umassdown=0
-wmassup=95
-wmassdown=65
-
-default_range_up=800
-default_range_down=0
-
-default_nbins = 128
-mass_nbins = 64
-
-ratiox=10
-ratioy=4
-
 ratiox= 8
 ratioy= 6
-
 
 for sam in samples:
 	for par in part:
 		for var in vari:
-			nbin = default_nbins
-			lower_range=default_range_down
-			upper_range=default_range_up
-			up_l = 10
-			#plt.style.use("atlas.mplstyle")
 			if(par == "Photon" and var=="M"):
 				continue
-			if(par == "Photon" and var=="PT"):
-				upper_range=default_range_up
-				lower_range=default_range_down
-				nbin=default_nbins
-			if((sam=="pro") | (sam=="int")):
-				upper_range=800
-			if (var == "Eta" or var == "Phi"):
-				lower_range=-5
-				upper_range=5
-				nbin = 32
-				up_l = 0
-			if(var=="M"):
-				nbin=mass_nbins
-				up_l = 0
-				if("W" in par):
-					lower_range=wmassdown
-					upper_range=wmassup
-				if("Top" in par):
-					lower_range=topmassdown
-					upper_range=topmassup
-				if("BQuark" in par):
-					lower_range=bmassdown
-					upper_range=bmassup
-				if("UQuark" in par):
-					lower_range=umassdown
-					upper_range=umassup
-			if(var=="PT"):
-				if("BQuark" in par):
-					upper_range=500
+			para = parameters_kin(sam, var, par)
+			lower_range=para[0]
+			upper_range=para[1]
+			nbin=para[2]
+			up_l=para[3]
 
 			ev = np.genfromtxt("data/"+sam+"_"+par+"_"+var+"_truth.txt")
 			ev = ev[(np.abs(ev)>up_l) & (ev!=999.9)]
+			ev = np.clip(ev, lower_range, upper_range)
+
 			print(len(ev[(np.abs(ev)>up_l) & (ev!=999.9)]))
 			print("data/"+sam+"_"+par+"_"+var+"_truth.txt")
+			
 			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
 
-			ev = np.clip(ev, lower_range, upper_range)
 			n,bins,a = plt.hist(ev,label=sam,bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 			plt.xlim(lower_range,upper_range)
 			plot_error_region2(n, np.sqrt(n), bins,"blue")
@@ -139,63 +165,19 @@ for sam in samples:
 				plt.close()
 
 
-topmassup=180
-topmassdown=165
-bmassup=5.2
-bmassdown=3.2
-umassup=1
-umassdown=0
-wmassup=95
-wmassdown=65
-
-default_range_up=800
-default_range_down=0
-
-default_nbins = 32
-mass_nbins = 64
-
 ratiox=8
 ratioy=6
 
-up_l=0.01
-
 for par in part:
 	for var in vari:
-		nbin = default_nbins
-		lower_range=default_range_down
-		upper_range=default_range_up
-		up_l = 10
-
 		if(par == "Photon" and var=="M"):
 			continue
-		if(par == "Photon" and var=="PT"):
-			upper_range=default_range_up
-			lower_range=default_range_down
-			nbin=default_nbins
-		if (var == "Eta" or var == "Phi"):
-			lower_range=-5
-			upper_range=5
-			nbin = 32
-			up_l = 0
-		if(var=="M"):
-			up_l=0
-			nbin=mass_nbins
-			if("W" in par):
-				lower_range=wmassdown
-				upper_range=wmassup
-			if("Top" in par):
-				lower_range=topmassdown
-				upper_range=topmassup
-			if("BQuark" in par):
-				lower_range=bmassdown
-				upper_range=bmassup
-			if("UQuark" in par):
-				lower_range=umassdown
-				upper_range=umassup
-		if(var=="PT"):
-			if("BQuark" in par):
-				upper_range=500
 
+		para = parameters_kin(sam, var, par)
+		lower_range=para[0]
+		upper_range=para[1]
+		nbin=para[2]
+		up_l=para[3]
 
 		evp = np.genfromtxt("data/pro_"+par+"_"+var+"_truth.txt")
 		evd = np.genfromtxt("data/dec_"+par+"_"+var+"_truth.txt")
@@ -231,8 +213,6 @@ for par in part:
 		plt.close()
 
 
-
-
 if("R_truth" not in os.listdir(PREFIX+"plots/")):
 	os.chdir(PREFIX+"plots/")
 	os.mkdir("R_truth/")
@@ -256,29 +236,11 @@ for sam in samples:
 			for p2 in RMPartP:
 				if(p1==p2):
 					continue
-
-				if va == "R":
-					lower_range = 0
-					upper_range = 7
-					nbin = 32
-				if va == "M":
-					lower_range = 0
-					if p1 =="Photon":
-						lower_range = 0
-						upper_range = 1400
-						if p2 == "TopQuark":
-							lower_range = 150
-							upper_range = 800
-					if p1 =="TopQuark":
-						lower_range = 150
-						upper_range = 500
-						if p2 == "WBoson":
-							lower_range = 200
-						if p2 == "Photon":
-							lower_range = 150
-							upper_range = 800
-					nbin = 64
-
+				para = parameters_RM(p1, p2, va)
+				lower_range=para[0]
+				upper_range=para[1]
+				nbin=para[2]
+				up_l=para[3]
 				ev = np.genfromtxt("data/"+sam+"_"+p1+"_"+p2+"_"+va+"_truth.txt")
 				ev = ev[(np.abs(ev)>up_l) & (ev!=999.9)]
 
@@ -322,28 +284,11 @@ for va in var:
 			if(p1==p2):
 				continue
 
-			if va == "R":
-				lower_range = 0
-				upper_range = 7
-				nbin = 32
-			if va == "M":
-				lower_range = 0
-				if p1 =="Photon":
-					lower_range = 0
-					upper_range = 1400
-					if p2 == "TopQuark":
-						lower_range = 150
-						upper_range = 800
-				if p1 =="TopQuark":
-					lower_range = 150
-					upper_range = 500
-					if p2 == "WBoson":
-						lower_range = 200
-					if p2 == "Photon":
-						lower_range = 150
-						upper_range = 800
-				nbin = 64
-
+			para = parameters_RM(p1, p2, va)
+			lower_range=para[0]
+			upper_range=para[1]
+			nbin=para[2]
+			up_l=para[3]
 			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+"_truth.txt")
 			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+"_truth.txt")
 			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+"_truth.txt")

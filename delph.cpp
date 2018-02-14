@@ -129,22 +129,22 @@ int main(int argc, char const *argv[])
 	string fileWeightNames[3];fileWeightNames[0] = "data/dec_weight";fileWeightNames[1] = "data/int_weight";fileWeightNames[2] = "data/pro_weight";
 
 	string filetPRNames[3];filetPRNames[0] = "data/dec_TopQuark_Photon_R";filetPRNames[1] = "data/int_TopQuark_Photon_R";filetPRNames[2] = "data/pro_TopQuark_Photon_R";
-	string filetbRNames[3];filetbRNames[0] = "data/dec_TopQuark_BQuark_R";filetbRNames[1] = "data/int_TopQuark_BQuark_R";filetbRNames[2] = "data/pro_TopQuark_BQuark_R";
+	string filetbRNames[3];filetbRNames[0] = "data/dec_TopQuark_bJet_R";filetbRNames[1] = "data/int_TopQuark_bJet_R";filetbRNames[2] = "data/pro_TopQuark_bJet_R";
 	string filetWRNames[3];filetWRNames[0] = "data/dec_TopQuark_WBoson_R";filetWRNames[1] = "data/int_TopQuark_WBoson_R";filetWRNames[2] = "data/pro_TopQuark_WBoson_R";
 	string filetjRNames[3];filetjRNames[0] = "data/dec_TopQuark_LeadingJet_R";filetjRNames[1] = "data/int_TopQuark_LeadingJet_R";filetjRNames[2] = "data/pro_TopQuark_LeadingJet_R";
 
 	string filetPMNames[3];filetPMNames[0] = "data/dec_TopQuark_Photon_M";filetPMNames[1] = "data/int_TopQuark_Photon_M";filetPMNames[2] = "data/pro_TopQuark_Photon_M";
-	string filetbMNames[3];filetbMNames[0] = "data/dec_TopQuark_BQuark_M";filetbMNames[1] = "data/int_TopQuark_BQuark_M";filetbMNames[2] = "data/pro_TopQuark_BQuark_M";
+	string filetbMNames[3];filetbMNames[0] = "data/dec_TopQuark_bJet_M";filetbMNames[1] = "data/int_TopQuark_bJet_M";filetbMNames[2] = "data/pro_TopQuark_bJet_M";
 	string filetWMNames[3];filetWMNames[0] = "data/dec_TopQuark_WBoson_M";filetWMNames[1] = "data/int_TopQuark_WBoson_M";filetWMNames[2] = "data/pro_TopQuark_WBoson_M";
 	string filetjMNames[3];filetjMNames[0] = "data/dec_TopQuark_LeadingJet_M";filetjMNames[1] = "data/int_TopQuark_LeadingJet_M";filetjMNames[2] = "data/pro_TopQuark_LeadingJet_M";
 
 	string filePtRNames[3];filePtRNames[0] = "data/dec_Photon_TopQuark_R";filePtRNames[1] = "data/int_Photon_TopQuark_R";filePtRNames[2] = "data/pro_Photon_TopQuark_R";
-	string filePbRNames[3];filePbRNames[0] = "data/dec_Photon_BQuark_R";filePbRNames[1] = "data/int_Photon_BQuark_R";filePbRNames[2] = "data/pro_Photon_BQuark_R";
+	string filePbRNames[3];filePbRNames[0] = "data/dec_Photon_bJet_R";filePbRNames[1] = "data/int_Photon_bJet_R";filePbRNames[2] = "data/pro_Photon_bJet_R";
 	string filePWRNames[3];filePWRNames[0] = "data/dec_Photon_WBoson_R";filePWRNames[1] = "data/int_Photon_WBoson_R";filePWRNames[2] = "data/pro_Photon_WBoson_R";
 	string filePjRNames[3];filePjRNames[0] = "data/dec_Photon_LeadingJet_R";filePjRNames[1] = "data/int_Photon_LeadingJet_R";filePjRNames[2] = "data/pro_Photon_LeadingJet_R";
 
 	string filePtMNames[3];filePtMNames[0] = "data/dec_Photon_TopQuark_M";filePtMNames[1] = "data/int_Photon_TopQuark_M";filePtMNames[2] = "data/pro_Photon_TopQuark_M";
-	string filePbMNames[3];filePbMNames[0] = "data/dec_Photon_BQuark_M";filePbMNames[1] = "data/int_Photon_BQuark_M";filePbMNames[2] = "data/pro_Photon_BQuark_M";
+	string filePbMNames[3];filePbMNames[0] = "data/dec_Photon_bJet_M";filePbMNames[1] = "data/int_Photon_bJet_M";filePbMNames[2] = "data/pro_Photon_bJet_M";
 	string filePWMNames[3];filePWMNames[0] = "data/dec_Photon_WBoson_M";filePWMNames[1] = "data/int_Photon_WBoson_M";filePWMNames[2] = "data/pro_Photon_WBoson_M";
 	string filePjMNames[3];filePjMNames[0] = "data/dec_Photon_LeadingJet_M";filePjMNames[1] = "data/int_Photon_LeadingJet_M";filePjMNames[2] = "data/pro_Photon_LeadingJet_M";
 

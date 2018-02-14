@@ -12,7 +12,7 @@ DELPHES = -L/home/salv/Dokumente/Masterarbeit/Delphes/ -lDelphes
 # ROOTCFLAGS :=
 # ROOTLIBS := 
 
-CXXFLAGS  =  -g -Wall -fPIC -Wno-deprecated -ggdb
+CXXFLAGS  =  -g -Wall -fPIC -Wno-deprecated -ggdb -O2
 CXXFLAGS    += $(ROOTCFLAGS) $(ROOTTEST) 
 CXXFLAGS    += -I. -I./include -I/home/salv/Dokumente/Masterarbeit/MG1/ExRootAnalysis/ -I/home/salv/Dokumente/Masterarbeit/MG1/ExRootAnalysis/ExRootAnalysis -I/home/salv/Dokumente/Masterarbeit/Delphes/
 LIBS 		= $(ROOTLIBS) -L./ -lTreePlayer -lMinuit $(EXROOT) $(DELPHES)
