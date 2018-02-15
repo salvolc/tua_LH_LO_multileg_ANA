@@ -197,7 +197,7 @@ for par in part:
 		
 		n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(n,1/np.sqrt(vn)*n, bins,"blue")
-		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
+		nI,binsI,aI = plt.hist(evi,label=r"interference",bins=bins,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
 		
 		ax = plt.gca()
@@ -310,7 +310,7 @@ for va in var:
 			
 			n,bins,a = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,weights=np.ones_like(ev)/float(len(ev)),histtype='step')#,range=(lower_range,upper_range))
 			plot_error_region2(n,1/np.sqrt(vn2)*n, bins,"blue")
-			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
+			nI,binsI,aI = plt.hist(evi,label=r"interference",bins=bins,lw=0.5,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
 			plot_error_region2(nI,1/np.sqrt(vnI2)*nI, binsI,"red")
 
 			ax = plt.gca()

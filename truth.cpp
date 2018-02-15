@@ -66,14 +66,14 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	string fileName = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
 	int nEvents = get_nevents(fileName);
 	MatrixXd ev = get_eventdisplay(fileName,1);
 	speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	fileNames[0] = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
 	fileNames[1] = "samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
 	fileNames[2] = "samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
 

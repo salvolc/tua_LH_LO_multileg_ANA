@@ -20,8 +20,8 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.5)
 
 def parameters_kin(sam,var,par):
-	topmassup=250
-	topmassdown=110
+	topmassup=800
+	topmassdown=0
 	bmassup=60
 	bmassdown=0
 	umassup=1
@@ -131,9 +131,7 @@ def parameters_RM(p1,p2,va):
 samples = ["dec","int","pro"]
 vari = ["PT","Eta","Phi","M"]
 part = ["TopQuark","Photon","bJet","Jet","WBoson"]
-#vgle = ["LH vs RH" , "$tuγ$ vs. $tcγ$"]
-#utyp = ["tua","tca"]
-#hand = ["LH","RH"]
+
 PREFIX = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))+"/"
 
 datas = os.listdir(PREFIX+"data")
@@ -217,7 +215,6 @@ for par in part:
 		#print(par+var)
 		ev = np.clip(ev, lower_range, upper_range)
 		evi = np.clip(evi, lower_range, upper_range)
-
 
 		vn,vbins,va = plt.hist(ev,label=r"production+decay",bins=nbin,lw=0.5,color="blue",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
 		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=vbins,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
@@ -353,3 +350,4 @@ for va in var:
 			plt.title(va+"("+p1+"_"+p2+") interference")
 			plt.savefig("plots/"+va+"/"+"all_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()
+

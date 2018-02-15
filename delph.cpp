@@ -70,14 +70,14 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	string fileName = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
 	int nEvents = get_nevents(fileName);
 	MatrixXd ev = get_eventdisplay(fileName,1);
 	speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decay_LO_wlep_PY8_DELATL_50.root";
+	fileNames[0] = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
 	fileNames[1] = "samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
 	fileNames[2] = "samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
 
@@ -214,11 +214,10 @@ int main(int argc, char const *argv[])
 		//int numberOfPhotons = get_numberOfPhotons(fileNames[iFile].c_str());
 		//int numberOfbJets = get_numberOfbJets(fileNames[iFile].c_str());
 
-		int iE 	 = 0;
-		int iELe = 0;
-		int iEta = 0;
-		int iMas = 0;
-		int iWei = 0;
+		int iE 	 = 0; int iELe = 0;
+		int iEta = 0; int iMas = 0;
+		int iWei = 0; int iPho = 0;
+		int iVal = 0;
 		for (int iEvent = 0; iEvent < nEvents; ++iEvent)
 		{
 			//string a; cin >> a;
@@ -334,6 +333,8 @@ int main(int argc, char const *argv[])
 			TV_Top = TV_WBoson+TV_bJet;
 
 			iE++;
+			if (nPhotons == 0){continue;}
+			iPho++;
 			if(nElectrons+nMuons==0){continue;}
 			iELe++;
 			if(fabs(TV_Jet.Eta())>2.5 || fabs(TV_bJet.Eta())>2.5){continue;}
@@ -342,6 +343,35 @@ int main(int argc, char const *argv[])
 			iMas++;
 			if(VWeight(iEvent)==0){continue;}
 			iWei++;
+			if(
+			TV_Photon.Pt()  == 0 ||    
+			TV_Photon.Eta() == 0 ||     
+			TV_Photon.Phi() == 0 ||     
+			TV_Top.M()      == 0 ||
+			TV_Top.Pt()     == 0 || 
+			TV_Top.Eta()    == 0 ||  
+			TV_Top.Phi()    == 0 ||  
+			P_MET->MET      == 0 ||
+			P_MET->Phi      == 0 ||
+			P_MET->Eta      == 0 ||
+			TV_WBoson.Pt()  == 0 ||    
+			TV_WBoson.Eta() == 0 ||     
+			TV_WBoson.Phi() == 0 ||     
+			TV_WBoson.M()   == 0 ||   
+			TV_Lepton.Pt()  == 0 ||    
+			TV_Lepton.Eta() == 0 ||     
+			TV_Lepton.Phi() == 0 ||     
+			TV_Lepton.M()   == 0 ||   
+			TV_bJet.Pt()    == 0 ||  
+			TV_bJet.Eta()   == 0 ||   
+			TV_bJet.Phi()   == 0 ||   
+			TV_bJet.M()     == 0 || 
+			TV_Jet.Pt()     == 0 || 
+			TV_Jet.Eta()    == 0 ||  
+			TV_Jet.Phi()    == 0 ||  
+			TV_Jet.M()      == 0)	
+			{continue;}
+			iVal++;
 
 			//####################################################
 			//#######################Saving#######################
@@ -437,11 +467,13 @@ int main(int argc, char const *argv[])
 
 		ofstream dat((fileNames[iFile]+"_Cut_Effs.txt").c_str());
 		dat.is_open();
-		dat << "Events: " << iE << "\n";
-		dat << "Eff Lepton Cut: " << ((float(iELe)/float(iE))*100) << "%" << "\n";
-		dat << "Eff Eta Cut: " << ((float(iEta)/float(iE))*100) << "%" << "\n";
-		dat << "Eff Mass Cut: " << ((float(iMas)/float(iE))*100) << "%" << "\n";
-		dat << "Eff Weight Cut: " << ((float(iWei)/float(iE))*100) << "%" << "\n";
+		dat << "Events: " 			<< iE << "\n";
+		dat << "Eff Photon Cut: " 	<< iPho << " " << ((float(iPho)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Lepton Cut: " 	<< iELe << " " << ((float(iELe)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Eta Cut: " 		<< iEta << " " << ((float(iEta)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Mass Cut: " 	<< iMas << " " << ((float(iMas)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Weight Cut: " 	<< iWei << " " << ((float(iWei)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Value Cut: " 	<< iVal << " " << ((float(iVal)/float(iE))*100) << "%" << "\n";
 		dat.close();
 
 		cout << iE << endl;
