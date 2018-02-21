@@ -53,7 +53,7 @@ TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[]);
 int get_nTruth(string fileName, int PID);
 VectorXd vertex_match(TClonesArray* TCP, int iEvent);
 double get_weight(TBranch* branchE, int iEvent);
-
+int pz_of_W(TLorentzVector lep, TLorentzVector* met, double* pz);
 
 
 int error=0;
@@ -217,7 +217,7 @@ int main(int argc, char const *argv[])
 		int iE 	 = 0; int iELe = 0;
 		int iEta = 0; int iMas = 0;
 		int iWei = 0; int iPho = 0;
-		int iVal = 0;
+		int iVal = 0; int iBTa = 0;
 		for (int iEvent = 0; iEvent < nEvents; ++iEvent)
 		{
 			//string a; cin >> a;
@@ -303,10 +303,18 @@ int main(int argc, char const *argv[])
 			//####################################################
 			//#########################MET und W##################
 			//####################################################
-			TLorentzVector TV_METp;
-			TLorentzVector TV_METm;
+			TLorentzVector TV_MET;
+			//TLorentzVector TV_METm;
 			TLorentzVector TV_WBoson;
 			MissingET* P_MET = (MissingET*)TCMET->At(0);
+			TV_MET.SetPxPyPzE(P_MET->MET*cos(P_MET->Phi),P_MET->MET*sin(P_MET->Phi),0,0);
+
+			double* nupz  = new double[2];
+			int nsol = pz_of_W(TV_Lepton,&TV_MET,nupz);
+
+			TV_MET.SetPxPyPzE(P_MET->MET*cos(P_MET->Phi),P_MET->MET*sin(P_MET->Phi),nupz[0],pow(pow(P_MET->MET*cos(P_MET->Phi),2)+pow(P_MET->MET*sin(P_MET->Phi),2)+pow(nupz[0],2),0.5));
+			TV_WBoson = TV_Lepton+TV_MET;
+/*			MissingET* P_MET = (MissingET*)TCMET->At(0);
 
 			double arg = ((mw*mw)/(2*(P_MET->MET)*(TV_Lepton.Pt())))+cos((P_MET->Phi)-(TV_Lepton.Phi()));
 			if (arg < 1){arg = 1;}
@@ -322,7 +330,7 @@ int main(int argc, char const *argv[])
 				TV_WBoson = TV_Lepton+TV_METp;
 			} else {
 				TV_WBoson = TV_Lepton+TV_METm;
-			}
+			}*/
 
 
 			//####################################################
@@ -333,13 +341,24 @@ int main(int argc, char const *argv[])
 			TV_Top = TV_WBoson+TV_bJet;
 
 			iE++;
-			if (nPhotons == 0){continue;}
+			if(nPhotons == 0){continue;}
 			iPho++;
 			if(nElectrons+nMuons==0){continue;}
 			iELe++;
-			if(fabs(TV_Jet.Eta())>2.5 || fabs(TV_bJet.Eta())>2.5){continue;}
+			if (nbtags < 1){continue;}
+			iBTa++;
+			if(
+			fabs(TV_Jet.Eta())>2.5 	|| 
+			fabs(TV_bJet.Eta())>2.5 ||
+			TV_Jet.Pt() < 25 		||
+			TV_bJet.Pt() < 25 		||
+			TV_Photon.Pt() < 25		||
+			TV_Lepton.Pt() < 25		||
+			TV_MET.Pt()	< 20
+			)
+			{continue;}
 			iEta++;
-			if(TV_WBoson.M() <= 0 || TV_Top.M() <= 0){continue;}
+			if(nsol==99){continue;}
 			iMas++;
 			if(VWeight(iEvent)==0){continue;}
 			iWei++;
@@ -470,8 +489,9 @@ int main(int argc, char const *argv[])
 		dat << "Events: " 			<< iE << "\n";
 		dat << "Eff Photon Cut: " 	<< iPho << " " << ((float(iPho)/float(iE))*100) << "%" << "\n";
 		dat << "Eff Lepton Cut: " 	<< iELe << " " << ((float(iELe)/float(iE))*100) << "%" << "\n";
-		dat << "Eff Eta Cut: " 		<< iEta << " " << ((float(iEta)/float(iE))*100) << "%" << "\n";
-		dat << "Eff Mass Cut: " 	<< iMas << " " << ((float(iMas)/float(iE))*100) << "%" << "\n";
+		dat << "Eff BTag Cut: " 	<< iBTa << " " << ((float(iBTa)/float(iE))*100) << "%" << "\n";
+		dat << "Eff Eta, Pt25 Met20 Cut: " 		<< iEta << " " << ((float(iEta)/float(iE))*100) << "%" << "\n";
+		dat << "Eff WRecoComplexSol Cut: " 	<< iMas << " " << ((float(iMas)/float(iE))*100) << "%" << "\n";
 		dat << "Eff Weight Cut: " 	<< iWei << " " << ((float(iWei)/float(iE))*100) << "%" << "\n";
 		dat << "Eff Value Cut: " 	<< iVal << " " << ((float(iVal)/float(iE))*100) << "%" << "\n";
 		dat.close();
@@ -1011,3 +1031,154 @@ TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[])
 }
 
 
+int pz_of_W(TLorentzVector lep, TLorentzVector* met, double* pz){
+	// function for the reconstruction of the pz value of the W
+	// using a W mass constrained
+	// If the transverse mass of the W is bigger than the W mass itself
+	// a fit changing the met is performed to ensure that the transverse
+	// W mass is equal to the W mass
+
+	const double MW = 80.4;
+	int nsol = 0;
+	//double pz[2]; // container for the two pz solutions;
+	// filling the global variables neccessary for Minuit
+	// lepton
+	/*NeutrinoFit::FullReco_PTe = lep.Pt();
+	NeutrinoFit::FullReco_Pxe = lep.Px();
+	NeutrinoFit::FullReco_Pye = lep.Py();
+	// met
+	NeutrinoFit::FullReco_MET_X = met->Px();
+	NeutrinoFit::FullReco_MET_Y = met->Py();*/
+	//   std::cout << "Debug: met_px = " << met->Px() << "; met_py = " << met->Py() << std::endl;
+	//   std::cout << "Debug: lep_px = " << lep.Px() << "; lep_py = " << lep.Py() << "; lep_pt = " << lep.Pt()<< std::endl;
+
+	double MisET2 = met->Px()*met->Px() + met->Py()*met->Py();
+	//transverse W-mass
+	double mWT = sqrt(2*(lep.Pt()*sqrt(MisET2) - lep.Px()*met->Px() - lep.Py()*met->Py()));
+
+	double PxNu_1 = 0;
+	double PxNu_2 = 0;
+	double PyNu_1 = 0.;
+	double PyNu_2 = 0.;
+	double PxNu = 0.;
+	double PyNu = 0.;
+
+	bool isComplex = false;
+
+
+
+	//check, whether transverse W-mass is larger than pole-mass mW or not.
+
+	if(mWT>MW)
+	{
+		/*isComplex = true;
+		// if mWT > mW correct PxNu and PyNu until mWT = MW
+
+		PxNu_1 = metfit(-1,1,MW); //(Printlevel, y-solution, MW)
+		PxNu_2 = metfit(-1,2,MW);
+
+
+		PyNu_1 = ((MW*MW*NeutrinoFit::FullReco_Pye + 2*NeutrinoFit::FullReco_Pxe*NeutrinoFit::FullReco_Pye*PxNu_1)
+		      	-(MW*NeutrinoFit::FullReco_PTe)*(sqrt(MW*MW + 4*NeutrinoFit::FullReco_Pxe*PxNu_1)))
+		 		 /(2*NeutrinoFit::FullReco_Pxe*NeutrinoFit::FullReco_Pxe);
+
+		PyNu_2 = ((MW*MW*NeutrinoFit::FullReco_Pye + 2*NeutrinoFit::FullReco_Pxe*NeutrinoFit::FullReco_Pye*PxNu_2)
+		      	+(MW*NeutrinoFit::FullReco_PTe)*(sqrt(MW*MW + 4*NeutrinoFit::FullReco_Pxe*PxNu_2)))
+		  		/(2*NeutrinoFit::FullReco_Pxe*NeutrinoFit::FullReco_Pxe);
+
+
+		//Calculate delta1 and delta2 from PxNu_1 and PxNu_2:
+		double delta1 =  sqrt((PxNu_1 - NeutrinoFit::FullReco_MET_X)*(PxNu_1 - NeutrinoFit::FullReco_MET_X) +(PyNu_1 - NeutrinoFit::FullReco_MET_Y)*(PyNu_1 - NeutrinoFit::FullReco_MET_Y));
+		double delta2 =  sqrt((PxNu_2 - NeutrinoFit::FullReco_MET_X)*(PxNu_2 - NeutrinoFit::FullReco_MET_X) +(PyNu_2 - NeutrinoFit::FullReco_MET_Y)*(PyNu_2 - NeutrinoFit::FullReco_MET_Y));
+
+
+
+		//PxNu and PyNu(PxNu):
+
+		if(delta1<delta2) 
+		{
+			PxNu = PxNu_1;
+			PyNu = PyNu_1;
+		} else 
+		{
+			PxNu = PxNu_2;
+			PyNu = PyNu_2;
+		}*/
+			return 99;
+
+	}
+
+	double pz1,pz2;
+
+	// z component of neutrino momentum ...
+	if( !isComplex) {
+	// ...for two real solutions (mWT < MW)
+
+	double mu 	= 	(MW*MW)/2 + met->Px()*lep.Px() + met->Py()*lep.Py();
+	double a 	= 	(mu*lep.Pz()) / (lep.E()*lep.E() - lep.Pz()*lep.Pz());
+	double a2 	= 	TMath::Power(a,2);
+	double b 	= 	(TMath::Power(lep.E(),2.)*MisET2 - TMath::Power(mu,2.))/
+	  				(TMath::Power(lep.E(),2) - TMath::Power(lep.Pz(),2));
+
+
+
+
+
+	if(a2-b < 0) 
+	{
+		//std::cout<<"Complex !!!"<<std::endl; // should not happen anymore!
+		Warning("pz_of_W",
+		      "Complex result should not happen anymore!!!");
+		pz1 = a;
+		pz2 = a;
+		nsol = 1;
+
+	} else {
+		double root = sqrt(a2-b);
+		pz1 = a + root;
+		pz2 = a - root;
+		nsol = 2;
+	}
+
+
+
+
+
+	} else  {
+		// ... for complex solutions (mWT > MW): PzNu_OLD and new correction (mWT = MW)
+		double mu 	=  (MW*MW)/2 + PxNu*lep.Px() + PyNu*lep.Py();
+		double a 	=  (mu*lep.Pz())/(lep.E()*lep.E() -
+						lep.Pz()*lep.Pz());
+		double a2 	=  TMath::Power(a,2);
+		double b 	=  (TMath::Power(lep.E(),2.)*(PxNu*PxNu+PyNu*PyNu) - TMath::Power(mu,2.))/
+		  			   (TMath::Power(lep.E(),2) - TMath::Power(lep.Pz(),2));
+
+		if (a2-b >= 0) {
+		  //double root = sqrt(a2-b);
+		  //std::cout<<"a+sqrt(a2-b) = "<<(a+root)<<" a-sqrt(a2-b) = "<<(a-root)<<std::endl;
+		}
+
+		pz1 = a;
+		pz2 = a;
+		nsol = 1;
+	}
+
+	// smaller pz solution is written to entry 0
+
+	if (fabs(pz1) <= fabs(pz2) ) {
+		pz[0] = pz1;
+		pz[1] = pz2;
+	} else {
+		pz[0] = pz2;
+		pz[1] = pz1;
+	}
+
+	// change values of met in case of complex solution
+	if (isComplex) 
+	{
+		met->SetPx(PxNu);
+		met->SetPy(PyNu);
+	}
+
+	return nsol;
+}

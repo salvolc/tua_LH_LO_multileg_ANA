@@ -52,6 +52,7 @@ TLorentzVector permute_to_mass_reco(int nVec, TLorentzVector vecs[]);
 int get_nTruth(string fileName, int PID);
 VectorXd vertex_match(TClonesArray* TCP, int iEvent);
 double get_weight(TBranch* branchE, int iEvent);
+int get_highestpt_particle(TClonesArray* TCP,int iPID);
 
 
 
@@ -108,22 +109,22 @@ int main(int argc, char const *argv[])
 	string fileTtPRNames[3];fileTtPRNames[0] = "data/dec_TopQuark_Photon_R_truth";fileTtPRNames[1] = "data/int_TopQuark_Photon_R_truth";fileTtPRNames[2] = "data/pro_TopQuark_Photon_R_truth";
 	string fileTtbRNames[3];fileTtbRNames[0] = "data/dec_TopQuark_BQuark_R_truth";fileTtbRNames[1] = "data/int_TopQuark_BQuark_R_truth";fileTtbRNames[2] = "data/pro_TopQuark_BQuark_R_truth";
 	string fileTtWRNames[3];fileTtWRNames[0] = "data/dec_TopQuark_WBoson_R_truth";fileTtWRNames[1] = "data/int_TopQuark_WBoson_R_truth";fileTtWRNames[2] = "data/pro_TopQuark_WBoson_R_truth";
-	string fileTtjRNames[3];fileTtjRNames[0] = "data/dec_TopQuark_LeadingJet_R_truth";fileTtjRNames[1] = "data/int_TopQuark_LeadingJet_R_truth";fileTtjRNames[2] = "data/pro_TopQuark_LeadingJet_R_truth";
+	string fileTtuRNames[3];fileTtuRNames[0] = "data/dec_TopQuark_UQuark_R_truth";fileTtuRNames[1] = "data/int_TopQuark_UQuark_R_truth";fileTtuRNames[2] = "data/pro_TopQuark_UQuark_R_truth";
 
 	string fileTtPMNames[3];fileTtPMNames[0] = "data/dec_TopQuark_Photon_M_truth";fileTtPMNames[1] = "data/int_TopQuark_Photon_M_truth";fileTtPMNames[2] = "data/pro_TopQuark_Photon_M_truth";
 	string fileTtbMNames[3];fileTtbMNames[0] = "data/dec_TopQuark_BQuark_M_truth";fileTtbMNames[1] = "data/int_TopQuark_BQuark_M_truth";fileTtbMNames[2] = "data/pro_TopQuark_BQuark_M_truth";
 	string fileTtWMNames[3];fileTtWMNames[0] = "data/dec_TopQuark_WBoson_M_truth";fileTtWMNames[1] = "data/int_TopQuark_WBoson_M_truth";fileTtWMNames[2] = "data/pro_TopQuark_WBoson_M_truth";
-	string fileTtjMNames[3];fileTtjMNames[0] = "data/dec_TopQuark_LeadingJet_M_truth";fileTtjMNames[1] = "data/int_TopQuark_LeadingJet_M_truth";fileTtjMNames[2] = "data/pro_TopQuark_LeadingJet_M_truth";
+	string fileTtuMNames[3];fileTtuMNames[0] = "data/dec_TopQuark_UQuark_M_truth";fileTtuMNames[1] = "data/int_TopQuark_UQuark_M_truth";fileTtuMNames[2] = "data/pro_TopQuark_UQuark_M_truth";
 
 	string fileTPtRNames[3];fileTPtRNames[0] = "data/dec_Photon_TopQuark_R_truth";fileTPtRNames[1] = "data/int_Photon_TopQuark_R_truth";fileTPtRNames[2] = "data/pro_Photon_TopQuark_R_truth";
 	string fileTPbRNames[3];fileTPbRNames[0] = "data/dec_Photon_BQuark_R_truth";fileTPbRNames[1] = "data/int_Photon_BQuark_R_truth";fileTPbRNames[2] = "data/pro_Photon_BQuark_R_truth";
 	string fileTPWRNames[3];fileTPWRNames[0] = "data/dec_Photon_WBoson_R_truth";fileTPWRNames[1] = "data/int_Photon_WBoson_R_truth";fileTPWRNames[2] = "data/pro_Photon_WBoson_R_truth";
-	string fileTPjRNames[3];fileTPjRNames[0] = "data/dec_Photon_LeadingJet_R_truth";fileTPjRNames[1] = "data/int_Photon_LeadingJet_R_truth";fileTPjRNames[2] = "data/pro_Photon_LeadingJet_R_truth";
+	string fileTPuRNames[3];fileTPuRNames[0] = "data/dec_Photon_UQuark_R_truth";fileTPuRNames[1] = "data/int_Photon_UQuark_R_truth";fileTPuRNames[2] = "data/pro_Photon_UQuark_R_truth";
 
 	string fileTPtMNames[3];fileTPtMNames[0] = "data/dec_Photon_TopQuark_M_truth";fileTPtMNames[1] = "data/int_Photon_TopQuark_M_truth";fileTPtMNames[2] = "data/pro_Photon_TopQuark_M_truth";
 	string fileTPbMNames[3];fileTPbMNames[0] = "data/dec_Photon_BQuark_M_truth";fileTPbMNames[1] = "data/int_Photon_BQuark_M_truth";fileTPbMNames[2] = "data/pro_Photon_BQuark_M_truth";
 	string fileTPWMNames[3];fileTPWMNames[0] = "data/dec_Photon_WBoson_M_truth";fileTPWMNames[1] = "data/int_Photon_WBoson_M_truth";fileTPWMNames[2] = "data/pro_Photon_WBoson_M_truth";
-	string fileTPjMNames[3];fileTPjMNames[0] = "data/dec_Photon_LeadingJet_M_truth";fileTPjMNames[1] = "data/int_Photon_LeadingJet_M_truth";fileTPjMNames[2] = "data/pro_Photon_LeadingJet_M_truth";
+	string fileTPuMNames[3];fileTPuMNames[0] = "data/dec_Photon_UQuark_M_truth";fileTPuMNames[1] = "data/int_Photon_UQuark_M_truth";fileTPuMNames[2] = "data/pro_Photon_UQuark_M_truth";
 
 
 	TFile* files[3];
@@ -154,11 +155,11 @@ int main(int argc, char const *argv[])
 		VectorXd VTBQuarkPT = VectorXd::Zero(nEvents);VectorXd VTBQuarkEta = VectorXd::Zero(nEvents);VectorXd VTBQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTBQuarkM = VectorXd::Zero(nEvents);
 		VectorXd VTUQuarkPT = VectorXd::Zero(nEvents);VectorXd VTUQuarkEta = VectorXd::Zero(nEvents);VectorXd VTUQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTUQuarkM = VectorXd::Zero(nEvents);
 
-		VectorXd VTTopQuark_Photon_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_LedJet_R = VectorXd::Zero(nEvents);
-		VectorXd VTTopQuark_Photon_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_LedJet_M = VectorXd::Zero(nEvents);
+		VectorXd VTTopQuark_Photon_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTTopQuark_UQuark_R = VectorXd::Zero(nEvents);
+		VectorXd VTTopQuark_Photon_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTTopQuark_UQuark_M = VectorXd::Zero(nEvents);
 
-		VectorXd VTPhoton_TopQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_LedJet_R = VectorXd::Zero(nEvents);
-		VectorXd VTPhoton_TopQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_LedJet_M = VectorXd::Zero(nEvents);
+		VectorXd VTPhoton_TopQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_R = VectorXd::Zero(nEvents);VectorXd VTPhoton_UQuark_R = VectorXd::Zero(nEvents);
+		VectorXd VTPhoton_TopQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_bQuark_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_WBoson_M = VectorXd::Zero(nEvents);VectorXd VTPhoton_UQuark_M = VectorXd::Zero(nEvents);
 
 		int i_unmatched = 0;
 
@@ -174,7 +175,7 @@ int main(int argc, char const *argv[])
 
 			int nParticles = TCP->GetEntries();
 
-			VectorXd i_matched = VectorXd::Zero(4); i_matched = vertex_match(TCP,iFile);
+			VectorXd i_matched = VectorXd::Zero(12); i_matched = vertex_match(TCP,iFile);
 
 			if(i_matched(6)==0 || i_matched(7)==0 || i_matched(8)==0 || i_matched(9)==0){i_unmatched++;continue;}
 
@@ -191,7 +192,8 @@ int main(int argc, char const *argv[])
 			VTTopQuarkPhi(iEvent) = P_Particle->Phi;
 			VTTopQuarkM(iEvent) = P_Particle->Mass;
 
-			P_Particle = (GenParticle*)TCP->At(i_matched(2));
+			P_Particle = (GenParticle*)TCP->At(get_highestpt_particle(TCP,2));
+			TLorentzVector	TVuQuark(P_Particle->Px,P_Particle->Py,P_Particle->Pz,P_Particle->E);
 			VTUQuarkPT(iEvent) = P_Particle->PT;
 			VTUQuarkEta(iEvent) = P_Particle->Eta;
 			VTUQuarkPhi(iEvent) = P_Particle->Phi;
@@ -214,19 +216,22 @@ int main(int argc, char const *argv[])
 			VTTopQuark_Photon_R(iEvent) = TVTopQuark.DeltaR(TVPhoton);
 			VTTopQuark_bQuark_R(iEvent) = TVTopQuark.DeltaR(TVbQuark);
 			VTTopQuark_WBoson_R(iEvent) = TVTopQuark.DeltaR(TVWBoson);
+			VTTopQuark_UQuark_R(iEvent) = TVTopQuark.DeltaR(TVuQuark);
 
 			VTTopQuark_Photon_M(iEvent) = (TVTopQuark+TVPhoton).M();
 			VTTopQuark_bQuark_M(iEvent) = (TVTopQuark+TVbQuark).M();
 			VTTopQuark_WBoson_M(iEvent) = (TVTopQuark+TVWBoson).M();
+			VTTopQuark_UQuark_M(iEvent) = (TVTopQuark+TVuQuark).M();
 
 			VTPhoton_TopQuark_R(iEvent) = TVPhoton.DeltaR(TVTopQuark);
 			VTPhoton_bQuark_R(iEvent) = TVPhoton.DeltaR(TVbQuark);
 			VTPhoton_WBoson_R(iEvent) = TVPhoton.DeltaR(TVWBoson);
+			VTPhoton_UQuark_R(iEvent) = TVPhoton.DeltaR(TVuQuark);
 
 			VTPhoton_TopQuark_M(iEvent) = (TVPhoton+TVTopQuark).M();
 			VTPhoton_bQuark_M(iEvent) = (TVPhoton+TVbQuark).M();
 			VTPhoton_WBoson_M(iEvent) = (TVPhoton+TVWBoson).M();
-
+			VTPhoton_UQuark_M(iEvent) = (TVPhoton+TVuQuark).M();
 
 
 			//if(iEvent%100==0){ladebalken(iEvent*(iFile+1),nEvents*3);}
@@ -263,18 +268,23 @@ int main(int argc, char const *argv[])
 		speichere(fileTtPRNames[iFile],VTTopQuark_Photon_R);
 		speichere(fileTtbRNames[iFile],VTTopQuark_bQuark_R);
 		speichere(fileTtWRNames[iFile],VTTopQuark_WBoson_R);
+		speichere(fileTtuRNames[iFile],VTTopQuark_UQuark_R);
 
 		speichere(fileTtPMNames[iFile],VTTopQuark_Photon_M);
 		speichere(fileTtbMNames[iFile],VTTopQuark_bQuark_M);
 		speichere(fileTtWMNames[iFile],VTTopQuark_WBoson_M);
+		speichere(fileTtuMNames[iFile],VTTopQuark_UQuark_M);
 
 		speichere(fileTPtRNames[iFile],VTPhoton_TopQuark_R);
 		speichere(fileTPbRNames[iFile],VTPhoton_bQuark_R);
 		speichere(fileTPWRNames[iFile],VTPhoton_WBoson_R);
+		speichere(fileTPuRNames[iFile],VTPhoton_UQuark_R);
 
 		speichere(fileTPtMNames[iFile],VTPhoton_TopQuark_M);
 		speichere(fileTPbMNames[iFile],VTPhoton_bQuark_M);
 		speichere(fileTPWMNames[iFile],VTPhoton_WBoson_M);
+		speichere(fileTPuMNames[iFile],VTPhoton_UQuark_M);
+
 
 		cout << i_unmatched << endl;
 
@@ -507,6 +517,21 @@ MatrixXd get_eventdisplay_particle(string fileName, int event, int PID){
 
 	file->Close();
 	return display;
+}
+
+int get_highestpt_particle(TClonesArray* TCP,int iPID){
+	int numberOfParticles = TCP->GetEntries();
+
+	int particle_number = -99999;
+	double pt = 0;
+    for (int ipart = 0; ipart < numberOfParticles; ++ipart)
+	{
+	   	GenParticle *P = (GenParticle*)TCP->At(ipart);
+		if ((abs(P->PID) == iPID) && (P->PT > pt))
+		{pt = P->PT; particle_number = ipart;}
+	}
+	if (particle_number == -99999){cout << "Warning highest pt light quark not found!!" << endl;}
+	return particle_number;
 }
 
 int get_nTruth(string fileName, int PID){

@@ -66,16 +66,38 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_debug_Top.root";
+	string fileName = "../samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
 	int nEvents = get_nevents(fileName);
-	MatrixXd ev = get_eventdisplay(fileName,1);
-	speichere("einevent",ev);
+	MatrixXd ev = get_eventdisplay(fileName,5);
+	speichere("einevent1",ev);
+	ev = get_eventdisplay(fileName,10);
+	speichere("einevent2",ev);
+	ev = get_eventdisplay(fileName,125);
+	speichere("einevent3",ev);
+
+	fileName = "../samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
+	nEvents = get_nevents(fileName);
+	ev = get_eventdisplay(fileName,5);
+	speichere("einevent1d",ev);
+	ev = get_eventdisplay(fileName,10);
+	speichere("einevent2d",ev);
+	ev = get_eventdisplay(fileName,125);
+	speichere("einevent3d",ev);
+
+	fileName = "../samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
+	nEvents = get_nevents(fileName);
+	ev = get_eventdisplay(fileName,1);
+	speichere("einevent1p",ev);
+	ev = get_eventdisplay(fileName,10);
+	speichere("einevent2p",ev);
+	ev = get_eventdisplay(fileName,125);
+	speichere("einevent3p",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LR_decay.root";
-	fileNames[1] = "samples/tua_LH_decay_anti.root";
-	fileNames[2] = "samples/tua_LH_ttbar_SM_decay_less_cut.root";
+	fileNames[0] = "../samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
+	fileNames[1] = "../samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
+	fileNames[2] = "../samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
 
 	string fileTPPTNames[3];fileTPPTNames[0] = "data/dec_Photon_PT_truth";fileTPPTNames[1] = "data/int_Photon_PT_truth";fileTPPTNames[2] = "data/pro_Photon_PT_truth";
 	string fileTPEtaNames[3];fileTPEtaNames[0] = "data/dec_Photon_Eta_truth";fileTPEtaNames[1] = "data/int_Photon_Eta_truth";fileTPEtaNames[2] = "data/pro_Photon_Eta_truth";
@@ -132,6 +154,7 @@ int main(int argc, char const *argv[])
 	for (int iFile = 0; iFile < 3; ++iFile)
 	{
 		
+		int i =0;
 		TFile* file = new TFile(fileNames[iFile].c_str(),"READ");
 		TTree* tree = (TTree*)file->Get("Delphes");
 
@@ -143,8 +166,6 @@ int main(int argc, char const *argv[])
 		bP->GetEntry(0);
 
 		int nEvents = get_nevents(fileNames[iFile].c_str());
-		MatrixXd ev = get_eventdisplay(fileNames[iFile].c_str(),1);
-
 
 		VectorXd VTPhotonPT = VectorXd::Zero(nEvents);VectorXd VTPhotonEta = VectorXd::Zero(nEvents);VectorXd VTPhotonPhi = VectorXd::Zero(nEvents);
 		VectorXd VTTopQuarkPT = VectorXd::Zero(nEvents);VectorXd VTTopQuarkEta = VectorXd::Zero(nEvents);VectorXd VTTopQuarkPhi = VectorXd::Zero(nEvents);VectorXd VTTopQuarkM = VectorXd::Zero(nEvents);
@@ -173,7 +194,6 @@ int main(int argc, char const *argv[])
 		VectorXd VTPhoton_LedJet_M = VectorXd::Zero(nEvents);
 
 		int i_unmatched = 0;
-
 		for (int iEvent = 0; iEvent < nEvents; ++iEvent)
 		{
 			//if(debug){cout<<"Input Number for next Event"<<endl;string a;cin >> a;}
@@ -227,18 +247,20 @@ int main(int argc, char const *argv[])
 			//if(debug)cout << get_eventdisplay_particle(fileNames[iFile],iEvent,-6)<< endl;
 
 		Long64_t numberOfParticles = TCP->GetEntries();
-
+		bool top = false; bool antitop = false;
 		for (int ipart = 0; ipart < numberOfParticles; ++ipart)
 		{
 		   	GenParticle *P = (GenParticle*)TCP->At(ipart);
-			if (abs(P->PID) == 6){
-				VTTopQuarkEta(iEvent) = P->Eta;
-				//break;
-			}
+			if ((P->PID) == 6){
+				top = true;}
+			if ((P->PID) == -6){
+				antitop = true;}
 		}
+		if (top && antitop){i++;}
+
 		}
 
-		speichere(fileTPPTNames[iFile],VTPhotonPT);
+/*		speichere(fileTPPTNames[iFile],VTPhotonPT);
 		speichere(fileTPEtaNames[iFile],VTPhotonEta);
 		speichere(fileTPPhiNames[iFile],VTPhotonPhi);
 
@@ -261,11 +283,11 @@ int main(int argc, char const *argv[])
 		speichere(fileTWEtaNames[iFile],VTWBosonEta);
 		speichere(fileTWPhiNames[iFile],VTWBosonPhi);
 		speichere(fileTWMNames[iFile],VTWBosonM);
-
+*/
 
 		file->Close();
+	cout << i << endl;
 	}
-
 	return 0;
 
 }
@@ -423,7 +445,7 @@ MatrixXd get_eventdisplay(string fileName, int event){
 	branchP->SetAddress(&TCP);
 	branchP->GetEntry(event);  
 	Long64_t numberOfParticles = TCP->GetEntries();
-	MatrixXd display = MatrixXd::Zero(numberOfParticles,10);
+	MatrixXd display = MatrixXd::Zero(numberOfParticles,12);
 
 
     for (int ipart = 0; ipart < numberOfParticles; ++ipart)
@@ -440,6 +462,8 @@ MatrixXd get_eventdisplay(string fileName, int event){
 		display(ipart,7)=P->Eta;
 		display(ipart,8)=P->Phi;
 		display(ipart,9)=ipart;
+		display(ipart,10)=P->D1;
+		display(ipart,11)=P->D2;
 	}
 
 	file->Close();

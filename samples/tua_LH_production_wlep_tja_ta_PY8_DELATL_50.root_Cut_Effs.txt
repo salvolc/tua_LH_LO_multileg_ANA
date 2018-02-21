@@ -1,5 +1,8 @@
-Events: 49617
-Eff Lepton Cut: 56.3416%
-Eff Eta Cut: 41.5039%
-Eff Mass Cut: 31.8258%
-Eff Weight Cut: 17.1433%
+Events: 49637
+Eff Photon Cut: 34652 69.8108%
+Eff Lepton Cut: 19459 39.2026%
+Eff BTag Cut: 10832 21.8224%
+Eff Eta, Pt25 Met20 Cut: 6216 12.5229%
+Eff WRecoComplexSol Cut: 5519 11.1187%
+Eff Weight Cut: 2532 5.10103%
+Eff Value Cut: 2530 5.097%
