@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os,inspect
 import matplotlib.ticker as ticker
+from matplotlib import gridspec
 
 def plot_error_region(yvalues,yerrors,bins,color='orange'):
 
@@ -18,6 +19,12 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 	bins_e = bins[1:]
 	bins_m = (bins_a+bins_e)/2
 	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.8)
+
+def plot_error_region2ax(ax,yvalues,yerrors,bins,color='orange'):
+	bins_a = bins[:-1]
+	bins_e = bins[1:]
+	bins_m = (bins_a+bins_e)/2
+	ax.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.8)
 
 def parameters_kin(sam,var,par):
 	topmassup=400
@@ -174,7 +181,47 @@ def labelkin(va,par):
 	else:
 		plt.legend(loc="best")
 	if va == "Eta":
-		plt.legend(loc="best",fontsize="small")		
+		plt.legend(loc="best",fontsize="small")	
+
+def labelkinax(ax,ax2,va,par):
+	label = r"$"
+	if va == "PT":
+		label += r"p_T"
+	if va == "Eta":
+		label += r"\eta"
+	if va == "Phi":
+		label += r"\Phi"
+	if va == "M":
+		label += r"m"
+	if par == "Photon":
+		label += r"(\gamma)$"
+	if par == "TopQuark":
+		label += r"(t)$"
+	if par == "bJet":
+		label += r"(bJet)$"
+	if par == "WBoson":
+		label += r"(W)$"
+	if par == "Jet":
+		label += r"(Jet)$"
+	if va == "PT" or va == "M":
+		label += "/GeV"
+	#ax.xlabel(label)
+	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.yaxis.set_label_coords(-0.08,0.5)
+	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+	ax.grid(alpha=0.5)
+	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	ax2.set_xlabel(label)
+	ax2.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+	ax2.grid(alpha=0.5)
+	ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+	if va == "M":
+		ax.legend(loc="upper right")
+	else:
+		ax.legend(loc="best")
+	if va == "Eta":
+		ax.legend(loc="best",fontsize="small")		
 
 
 def labelRM(va,p1,p2):
@@ -217,6 +264,51 @@ def labelRM(va,p1,p2):
 	#else:
 	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 	plt.legend(loc="best")
+
+
+def labelRMax(ax,ax2,va,p1,p2):
+	vari = r"$"
+	if va == "R":
+		vari += r"\Delta R"
+	if va == "M":
+		vari += r"m"
+
+	parts = ""
+
+	if p1 == "Photon":
+		parts += r"\gamma,"
+	if p1 == "TopQuark":
+		parts += r"t,"
+
+	if p2 == "Photon":
+		parts += r"\gamma"
+	if p2 == "TopQuark":
+		parts += r"t"
+	if p2 == "bJet":
+		parts += r"bJet"
+	if p2 == "WBoson":
+		parts += r"W"
+	if p2 == "LeadingJet":
+		parts += r"Jet"
+
+	einh = ""
+	if va == "M":
+		einh += "/GeV"
+
+	#ax.xlabel(vari+"("+parts+")"+r"$"+einh)
+	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.yaxis.set_label_coords(-0.08,0.5)
+	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+	ax.grid(alpha=0.5)
+	#if p1 == "Photon" and p2 == "LeadingJet" and va=="M":
+	#	pass
+	#else:
+	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	ax.legend(loc="best")
+	ax2.set_xlabel(vari+"("+parts+")"+r"$"+einh)
+	ax2.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+	ax2.grid(alpha=0.5)
+	ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 
 ###################################################################################################
@@ -287,20 +379,37 @@ for par in part:
 		nV,bV,aV = plt.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,weights=npNV+ndNV,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
 
 		plt.close()
+		gs = gridspec.GridSpec(2, 1, width_ratios=[1],height_ratios=[3,1]) 
+		f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+		ax1 = plt.subplot(gs[0])
+		ax2 = plt.subplot(gs[1])
 
-		npN, bpN, a1 = plt.hist(evp,label="production mode",weights=np.ones_like(evp)/len(evp)*prod_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="blue")
-		ndN, bdN, a2 = plt.hist(evd,label="decay mode",weights=np.ones_like(evd)/len(evd)*decay_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="red")
-		nir, bir, a = plt.hist(evi,weights=np.ones_like(evi)/len(evi),label="interference sample",bins=bpr,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
-		n,b,a = plt.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,label="decay+production mode",weights=npN+ndN,histtype="step",lw=0.8,color="green")
+		npN, bpN, a1 = ax1.hist(evp,label="production mode",weights=np.ones_like(evp)/len(evp)*prod_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="blue")
+		ndN, bdN, a2 = ax1.hist(evd,label="decay mode",weights=np.ones_like(evd)/len(evd)*decay_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="red")
+		nir, bir, a = ax1.hist(evi,weights=np.ones_like(evi)/len(evi),label="interference sample",bins=bpr,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
+		n,b,a = ax1.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,label="decay+production mode",weights=npN+ndN,histtype="step",lw=0.8,color="green")
 
-		plot_error_region2(npN,1/np.sqrt(npNV)*npN, bpr,"blue")
-		plot_error_region2(ndN,1/np.sqrt(ndNV)*ndN, bpr,"red")
-		plot_error_region2(nir,1/np.sqrt(niV)*nir, bpr,"black")
-		plot_error_region2(n,1/np.sqrt(nV)*n, bpr,"green")
+		plot_error_region2ax(ax1,npN,1/np.sqrt(npNV)*npN, bpr,"blue")
+		plot_error_region2ax(ax1,ndN,1/np.sqrt(ndNV)*ndN, bpr,"red")
+		plot_error_region2ax(ax1,nir,1/np.sqrt(niV)*nir, bpr,"black")
+		plot_error_region2ax(ax1,n,1/np.sqrt(nV)*n, bpr,"green")
 
-		plt.xlim(lower_range,upper_range)
+		ax2.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,weights=np.ones_like(bpr[1:]),histtype="step",lw=0.8,color="black")
+		w=n/nir;w[w==np.inf] = np.nan;w[np.isnan(w)] = 0
 
-		labelkin(var,par)
+		nn,bb,aa = ax2.hist(bpr[1:]-np.diff(bpr)/2,alpha=0,bins=bpr,weights=w,histtype="step",lw=0.8,color="green")
+
+		error = np.sqrt((np.sqrt(nV)/nV)**2 + (np.sqrt(niV)/niV)**2)
+		ax2.errorbar(bpr[1:]-np.diff(bpr)/2,nn,xerr=np.diff(bpr)/2,yerr=error,fmt="none",color="green",label="(Pro+Dec)/Int",lw=0.8)
+		ax2.set_ylabel("Dec+Pro/Int")
+		#ax2.legend(loc="best")
+		ax2.grid(alpha=0.6)
+
+		ax1.set_xlim(lower_range,upper_range)
+		ax2.set_xlim(lower_range,upper_range)
+
+
+		labelkinax(ax1,ax2,var,par)
 		
 		plt.savefig("plots/"+par+"/"+"decproint"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 
@@ -408,23 +517,38 @@ for va in var:
 			nV,bV,aV = plt.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,weights=npNV+ndNV,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
 
 			plt.close()
+			gs = gridspec.GridSpec(2, 1, width_ratios=[1],height_ratios=[3,1]) 
+			f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+			ax1 = plt.subplot(gs[0])
+			ax2 = plt.subplot(gs[1])
+			gs.update(wspace=0.03)
 
-			npN, bpN, a1 = plt.hist(evp,label="production mode",weights=np.ones_like(evp)/len(evp)*prod_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="blue")
-			ndN, bdN, a2 = plt.hist(evd,label="decay mode",weights=np.ones_like(evd)/len(evd)*decay_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="red")
-			nir, bir, a = plt.hist(evi,weights=np.ones_like(evi)/len(evi),label="interference sample",bins=bpr,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
-			n,b,a = plt.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,label="decay+production mode",weights=npN+ndN,histtype="step",lw=0.8,color="green")
+			npN, bpN, a1 = ax1.hist(evp,label="production mode",weights=np.ones_like(evp)/len(evp)*prod_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="blue")
+			ndN, bdN, a2 = ax1.hist(evd,label="decay mode",weights=np.ones_like(evd)/len(evd)*decay_fraction,range=(lower_range,upper_range),bins=bpr,histtype="step",lw=0.8,color="red")
+			nir, bir, a = ax1.hist(evi,weights=np.ones_like(evi)/len(evi),label="interference sample",bins=bpr,histtype="step",lw=0.8,color="black",range=(lower_range,upper_range))
+			n,b,a = ax1.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,label="decay+production mode",weights=npN+ndN,histtype="step",lw=0.8,color="green")
 
-			plot_error_region2(npN,1/np.sqrt(npNV)*npN, bpr,"blue")
-			plot_error_region2(ndN,1/np.sqrt(ndNV)*ndN, bpr,"red")
-			plot_error_region2(nir,1/np.sqrt(niV)*nir, bpr,"black")
-			plot_error_region2(n,1/np.sqrt(nV)*n, bpr,"green")
+			plot_error_region2ax(ax1,npN,1/np.sqrt(npNV)*npN, bpr,"blue")
+			plot_error_region2ax(ax1,ndN,1/np.sqrt(ndNV)*ndN, bpr,"red")
+			plot_error_region2ax(ax1,nir,1/np.sqrt(niV)*nir, bpr,"black")
+			plot_error_region2ax(ax1,n,1/np.sqrt(nV)*n, bpr,"green")
 
-			#if p1 == "Photon" and p2=="LeadingJet" and va=="M":
-			#	plt.yscale("log")
 
-			plt.xlim(lower_range,upper_range)
+			ax2.hist(bpr[1:]-np.diff(bpr)/2,bins=bpr,weights=np.ones_like(bpr[1:]),histtype="step",lw=0.8,color="black")
+			w=n/nir;w[w==np.inf] = np.nan;w[np.isnan(w)] = 0
 
-			labelRM(va,p1,p2)
+			nn,bb,aa = ax2.hist(bpr[1:]-np.diff(bpr)/2,alpha=0,bins=bpr,weights=w,histtype="step",lw=0.8,color="green")
+
+			error = np.sqrt((np.sqrt(nV)/nV)**2 + (np.sqrt(niV)/niV)**2)
+			ax2.errorbar(bpr[1:]-np.diff(bpr)/2,nn,xerr=np.diff(bpr)/2,yerr=error,fmt="none",color="green",label="(Pro+Dec)/Int",lw=0.8)
+			ax2.set_ylabel("Dec+Pro/Int")
+			#ax2.legend(loc="best")
+			ax2.grid(alpha=0.6)
+
+			ax1.set_xlim(lower_range,upper_range)
+			ax2.set_xlim(lower_range,upper_range)
+
+			labelRMax(ax1,ax2,va,p1,p2)
 			
 			plt.savefig("plots/"+va+"/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 
