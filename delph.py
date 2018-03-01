@@ -17,7 +17,7 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 	bins_a = bins[:-1]
 	bins_e = bins[1:]
 	bins_m = (bins_a+bins_e)/2
-	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.5)
+	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.8)
 
 def parameters_kin(sam,var,par):
 	topmassup=400
@@ -82,6 +82,14 @@ def parameters_kin(sam,var,par):
 	if(var=="PT"):
 		if("bJet" in par):
 			upper_range=400
+		if("W" in par):
+			nbin = 32
+		if("Top" in par):
+			nbin = 32
+		if("Jet" in par):
+			nbin = 32
+		if("bJet" in par):
+			nbin = 32
 	return [lower_range,upper_range,nbin,up_l]
 
 
@@ -108,7 +116,7 @@ def parameters_RM(p1,p2,va):
 				nbin = 32
 			if p2 == "LeadingJet":
 				lower_range = 0
-				upper_range = 800
+				upper_range = 700
 			if p2 == "bJet":
 				lower_range = 0
 				upper_range = 500
@@ -242,7 +250,7 @@ ratiox=6
 ratioy=4
 
 
-"""for par in part:
+for par in part:
 	for var in vari:
 		if(par == "Photon" and var=="M"):
 			continue
@@ -342,7 +350,7 @@ for par in part:
 		labelkin(var,par)
 
 		plt.savefig("plots/"+par+"/"+"all"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
-		plt.close()"""
+		plt.close()
 
 
 
@@ -418,7 +426,7 @@ for va in var:
 
 			labelRM(va,p1,p2)
 			
-			plt.savefig("plots/"+va+"/"+"decproint"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+			plt.savefig("plots/"+va+"/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 
 
 

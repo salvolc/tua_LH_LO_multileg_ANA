@@ -17,7 +17,7 @@ def plot_error_region2(yvalues,yerrors,bins,color='orange'):
 	bins_a = bins[:-1]
 	bins_e = bins[1:]
 	bins_m = (bins_a+bins_e)/2
-	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.5)
+	plt.errorbar(bins_m,yvalues,yerr=yerrors,drawstyle = 'steps-mid',color=color,lw=0.8)
 
 def parameters_kin(sam,var,par):
 	topmassup=185
@@ -83,6 +83,7 @@ def parameters_RM(p1,p2,va):
 		nbin = 32
 	if va == "M":
 		lower_range = 0
+		nbin = 64
 		if p1 =="Photon":
 			lower_range = 0
 			upper_range = 1400
@@ -91,7 +92,8 @@ def parameters_RM(p1,p2,va):
 				upper_range = 800
 			if p2 == "UQuark":
 				lower_range = 125
-				upper_range = 300
+				upper_range = 220
+				nbin=80
 		if p1 =="TopQuark":
 			lower_range = 150
 			upper_range = 500
@@ -101,7 +103,6 @@ def parameters_RM(p1,p2,va):
 			if p2 == "Photon":
 				lower_range = 150
 				upper_range = 800
-		nbin = 64
 	return [lower_range,upper_range,nbin,up_l]
 
 def labelkin(va,par):
@@ -129,7 +130,7 @@ def labelkin(va,par):
 	plt.xlabel(label)
 	plt.ylabel("number of entries (normalized)",rotation=90)
 	ax = plt.gca()
-	ax.yaxis.set_label_coords(-0.08,0.5)
+	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	plt.grid(alpha=0.5)
 	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -172,13 +173,16 @@ def labelRM(va,p1,p2):
 		einh += "/GeV"
 
 	plt.xlabel(vari+"("+parts+")"+r"$"+einh)
-	plt.ylabel("number of entries",rotation=90)
+	plt.ylabel("number of entries (normalized)",rotation=90)
 	ax = plt.gca()
-	ax.yaxis.set_label_coords(-0.08,0.5)
+	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	plt.grid(alpha=0.5)
 	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 	plt.legend(loc="best")
+	if p1 == "Photon" and p2=="UQuark" and va=="M":
+		plt.yscale("log")
+		plt.ylim(0.0005,0.37)
 
 
 ###################################################################################################
@@ -384,7 +388,7 @@ for va in var:
 
 			labelRM(va,p1,p2)
 			
-			plt.savefig("plots/"+va+"_truth/"+"decproint"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
+			plt.savefig("plots/"+va+"_truth/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 
 
 
