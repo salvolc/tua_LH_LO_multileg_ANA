@@ -490,3 +490,375 @@ data/pro_TopQuark_LeadingJet_M.txt
 1.0000000000000009
 3774
 data/dec_TopQuark_PT.txt
+TopQuark PT KS Test
+0.997786036716
+()
+TopQuark Eta KS Test
+0.244654404497
+()
+TopQuark Phi KS Test
+0.956366085473
+()
+TopQuark M KS Test
+0.954042898355
+()
+Photon PT KS Test
+0.800186142197
+()
+Photon Eta KS Test
+0.564696115084
+()
+Photon Phi KS Test
+0.547328911295
+()
+bJet PT KS Test
+0.733543787606
+()
+bJet Eta KS Test
+0.548033441807
+()
+bJet Phi KS Test
+0.564510171394
+()
+bJet M KS Test
+0.723481006244
+()
+Jet PT KS Test
+0.995005544253
+()
+Jet Eta KS Test
+0.999999862782
+()
+Jet Phi KS Test
+0.763874761417
+()
+Jet M KS Test
+0.418158037912
+()
+WBoson PT KS Test
+0.987121405654
+()
+WBoson Eta KS Test
+0.123097856824
+()
+WBoson Phi KS Test
+0.487399782749
+()
+WBoson M KS Test
+1.0
+()
+TopQuark PT KS Test
+0.987097344734
+()
+TopQuark Eta KS Test
+0.244676510075
+()
+TopQuark Phi KS Test
+0.400979482006
+()
+TopQuark M KS Test
+0.954036315946
+()
+Photon PT KS Test
+0.800229069888
+()
+Photon Eta KS Test
+0.564630569841
+()
+Photon Phi KS Test
+0.547336465938
+()
+bJet PT KS Test
+0.733681967309
+()
+bJet Eta KS Test
+0.548013853203
+()
+bJet Phi KS Test
+0.412665578588
+()
+bJet M KS Test
+0.723449529999
+()
+Jet PT KS Test
+0.911959882698
+()
+Jet Eta KS Test
+0.99851788204
+()
+Jet Phi KS Test
+0.237094619754
+()
+Jet M KS Test
+0.418045005797
+()
+WBoson PT KS Test
+0.987122327377
+()
+WBoson Eta KS Test
+0.123096410708
+()
+WBoson Phi KS Test
+0.150104183612
+()
+WBoson M KS Test
+1.0
+()
+Photon TopQuark R KS Test
+0.784486262603
+()
+Photon bJet R KS Test
+0.930526967237
+()
+Photon WBoson R KS Test
+0.842793719135
+()
+Photon LeadingJet R KS Test
+0.848289153246
+()
+TopQuark Photon R KS Test
+0.784486262603
+()
+TopQuark bJet R KS Test
+0.996133722159
+()
+TopQuark WBoson R KS Test
+0.296112087112
+()
+TopQuark LeadingJet R KS Test
+0.976803655847
+()
+Photon TopQuark M KS Test
+0.999302571652
+()
+Photon bJet M KS Test
+0.818078691087
+()
+Photon WBoson M KS Test
+0.963834775561
+()
+Photon LeadingJet M KS Test
+0.486103765118
+()
+TopQuark Photon M KS Test
+0.999302571652
+()
+TopQuark bJet M KS Test
+0.920886926276
+()
+TopQuark WBoson M KS Test
+0.909582515128
+()
+TopQuark LeadingJet M KS Test
+0.912685574236
+()
+TopQuark PT KS Test
+0.997230131708
+()
+TopQuark Eta KS Test
+0.194622229163
+()
+TopQuark Phi KS Test
+0.225349704468
+()
+TopQuark M KS Test
+0.88011258424
+()
+Photon PT KS Test
+0.774587955128
+()
+Photon Eta KS Test
+0.564631024269
+()
+Photon Phi KS Test
+0.54681230633
+()
+bJet PT KS Test
+0.5618185964
+()
+bJet Eta KS Test
+0.560648934889
+()
+bJet Phi KS Test
+0.767335945757
+()
+bJet M KS Test
+0.91857883601
+()
+Jet PT KS Test
+0.99363200147
+()
+Jet Eta KS Test
+0.998517899108
+()
+Jet Phi KS Test
+0.267320172359
+()
+Jet M KS Test
+0.466085566306
+()
+WBoson PT KS Test
+0.993922386885
+()
+WBoson Eta KS Test
+0.244374885565
+()
+WBoson Phi KS Test
+0.19096906488
+()
+WBoson M KS Test
+1.0
+()
+Photon TopQuark R KS Test
+0.838635000207
+()
+Photon bJet R KS Test
+0.947698379092
+()
+Photon WBoson R KS Test
+0.5550871466
+()
+Photon LeadingJet R KS Test
+0.686050904067
+()
+TopQuark Photon R KS Test
+0.838635000207
+()
+TopQuark bJet R KS Test
+0.891425643955
+()
+TopQuark WBoson R KS Test
+0.202141569878
+()
+TopQuark LeadingJet R KS Test
+0.985105658084
+()
+Photon TopQuark M KS Test
+0.995196631365
+()
+Photon bJet M KS Test
+0.920042271688
+()
+Photon WBoson M KS Test
+0.95809064869
+()
+Photon LeadingJet M KS Test
+0.572718004784
+()
+TopQuark Photon M KS Test
+0.995196631365
+()
+TopQuark bJet M KS Test
+0.918704838303
+()
+TopQuark WBoson M KS Test
+0.779945729039
+()
+TopQuark LeadingJet M KS Test
+0.942972167605
+()
+TopQuark PT KS Test
+0.997230131708
+()
+TopQuark Eta KS Test
+0.194622229163
+()
+TopQuark Phi KS Test
+0.225349704468
+()
+TopQuark M KS Test
+0.88011258424
+()
+Photon PT KS Test
+0.774587955128
+()
+Photon Eta KS Test
+0.564631024269
+()
+Photon Phi KS Test
+0.54681230633
+()
+bJet PT KS Test
+0.5618185964
+()
+bJet Eta KS Test
+0.560648934889
+()
+bJet Phi KS Test
+0.767335945757
+()
+bJet M KS Test
+0.91857883601
+()
+Jet PT KS Test
+0.99363200147
+()
+Jet Eta KS Test
+0.998517899108
+()
+Jet Phi KS Test
+0.267320172359
+()
+Jet M KS Test
+0.466085566306
+()
+WBoson PT KS Test
+0.993922386885
+()
+WBoson Eta KS Test
+0.244374885565
+()
+WBoson Phi KS Test
+0.19096906488
+()
+WBoson M KS Test
+1.0
+()
+Photon TopQuark R KS Test
+0.838635000207
+()
+Photon bJet R KS Test
+0.947698379092
+()
+Photon WBoson R KS Test
+0.5550871466
+()
+Photon LeadingJet R KS Test
+0.686050904067
+()
+TopQuark Photon R KS Test
+0.838635000207
+()
+TopQuark bJet R KS Test
+0.891425643955
+()
+TopQuark WBoson R KS Test
+0.202141569878
+()
+TopQuark LeadingJet R KS Test
+0.985105658084
+()
+Photon TopQuark M KS Test
+0.995196631365
+()
+Photon bJet M KS Test
+0.920042271688
+()
+Photon WBoson M KS Test
+0.95809064869
+()
+Photon LeadingJet M KS Test
+0.572718004784
+()
+TopQuark Photon M KS Test
+0.995196631365
+()
+TopQuark bJet M KS Test
+0.918704838303
+()
+TopQuark WBoson M KS Test
+0.779945729039
+()
+TopQuark LeadingJet M KS Test
+0.942972167605
+()

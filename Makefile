@@ -39,8 +39,8 @@ $(PRO): *.cpp $(OOBJ)
 
 $(plots): $(PRO) truth.py delph.py
 	./$(PRO)
-	python3.5 truth.py >> pyout
-	python3.5 delph.py >> dpyout
+	python truth.py >> pyout
+	python delph.py >> dpyout
 
 truthl: truth.cpp
 	g++ truth.cpp -o truth -fopenmp $(CXXFLAGS) $(LIBS)
@@ -53,18 +53,23 @@ delphl: delph.cpp
 truth: truth.cpp truth.py
 	g++ truth.cpp -o truth -fopenmp $(CXXFLAGS) $(LIBS)
 	./truth
-	python3.5 truth.py >> pyout
+	python truth.py >> pyout
 
 delph: delph.cpp delph.py
 	g++ delph.cpp -o delph -fopenmp $(CXXFLAGS) $(LIBS)
 	./delph
-	python3.5 delph.py >> dpyout
+	python delph.py >> dpyout
 
 tpy: truth.py
-	python3.5 truth.py >> pyout
+	python truth.py >> pyout
 
 dpy: delph.py
-	python3.5 delph.py >> dpyout
+	python delph.py >> dpyout
+
+apy: truth.py delph.py
+	python truth.py >> pyout
+	python delph.py >> dpyout
+
 
 light: $(PRO)
 	./$(PRO)
