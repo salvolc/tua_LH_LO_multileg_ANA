@@ -20,13 +20,17 @@ for par in part:
 		os.chdir(PREFIX)
 
 
+sdp = 1573.+3732.
+decay_fraction = 1573./sdp
+prod_fraction = 3732./sdp
 
-decay_fraction = 2266./7084.
-prod_fraction = 4818./7084.
+
+
 ratiox=6
 ratioy=4
 eps=0.001
 
+tfl = ROOT.TFile("tua_crosscheck_salvatore.root","recreate")
 
 for par in part:
 	for var in vari:
@@ -66,9 +70,9 @@ for par in part:
 		ax1 = plt.subplot(gs[0])
 		ax2 = plt.subplot(gs[1])
 		#plt.subplots_adjust(wspace=-1)
-		binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
-
+		#nbin=128
 		#binning = np.linspace(lower_range, upper_range, nbin)
+		binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
 
 		hi		= rplot.Hist(binning);map(hi.Fill, evi)
 		hdp		= rplot.Hist(binning);map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction);map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
@@ -113,6 +117,8 @@ for par in part:
 		ax2.set_xlim(lower_range,upper_range)
 		ax2.set_ylim(0.5,1.5)
 
+		if par == "Photon" and var=="PT":
+			ax1.set_ylim(ymin=0)
 
 		labelkinax(ax1,ax2,var,par)
 		leg = ax1.legend(title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
@@ -121,56 +127,40 @@ for par in part:
 
 		plt.savefig("plots/"+par+"_truth/"+"decproint"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
+		hdp.write("tua_ratio_"+par+"_"+var)
 
 
+wpro=np.genfromtxt("data/pro_weight.txt");hwp=rplot.Hist(np.linspace(0,np.max(wpro)*1.1,64));map(hwp.Fill, wpro)
+rplt.hist(hwp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+rplt.errorbar(hwp,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+plt.xlabel("weights")
+plt.ylabel("number of entries",rotation=90)
+plt.grid(alpha=0.7)
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+plt.savefig("weights_production.pdf",bbox_inches='tight')
+plt.close()
+
+wdec=np.genfromtxt("data/dec_weight.txt");hwd=rplot.Hist(np.linspace(0,np.max(wdec)*1.1,64));map(hwd.Fill, wdec)
+rplt.hist(hwd,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+rplt.errorbar(hwd,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+plt.xlabel("weights")
+plt.ylabel("number of entries",rotation=90)
+plt.grid(alpha=0.7)
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+plt.savefig("weights_decay.pdf",bbox_inches='tight')
+plt.close()
+
+wint=np.genfromtxt("data/int_weight.txt");hwi=rplot.Hist(np.linspace(0,np.max(wint)*1.1,64));map(hwi.Fill, wint)
+rplt.hist(hwi,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+rplt.errorbar(hwi,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+plt.xlabel("weights")
+plt.ylabel("number of entries",rotation=90)
+plt.grid(alpha=0.7)
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+plt.savefig("weights_interference.pdf",bbox_inches='tight')
+plt.close()
 
 
-"""for par in part:
-	for var in vari:
-		if(par == "Photon" and var=="M"):
-			continue
-
-		para = parameters_kin("dec", var, par)
-		lower_range=para[0]
-		upper_range=para[1]
-		nbin=para[2]
-		up_l=para[3]
-
-		evp = np.genfromtxt("data/pro_"+par+"_"+var+"_truth.txt")
-		evd = np.genfromtxt("data/dec_"+par+"_"+var+"_truth.txt")
-		evi = np.genfromtxt("data/int_"+par+"_"+var+"_truth.txt")
-		evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)]
-		ev = np.concatenate((evp, evd), axis=0)
-		#print(par+var)
-		ev = np.clip(ev, lower_range, upper_range)
-		evi = np.clip(evi, lower_range, upper_range)
-		evp = np.clip(evp, lower_range, upper_range)
-		evd = np.clip(evd, lower_range, upper_range)
-
-
-		nbpV,binspV,apV = plt.hist(evp,bins=nbin,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evp)*prod_fraction,range=(lower_range,upper_range),histtype='step')
-		nbdV,binsdV,adV = plt.hist(evd,bins=binspV,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evd)*decay_fraction,range=(lower_range,upper_range),histtype='step')
-		nV,binsV,aV 	= plt.hist(binspV[1:]-np.diff(binspV)/2,label=r"production+decay",bins=binspV,lw=0.5,color="blue",fill=False,weights=nbpV+nbdV,range=(lower_range,upper_range),histtype='step')
-
-		vnI,vbinsI,vaI = plt.hist(evi,label=r"interference",bins=nbin,lw=0.5,color="red",fill=False,normed=False,range=(lower_range,upper_range),histtype='step')
-		plt.close()
-
-		plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
-
-		nbp,binsp,ap = plt.hist(evp,bins=nbin,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evp)*prod_fraction/len(evp),range=(lower_range,upper_range),histtype='step')
-		nbd,binsd,ad = plt.hist(evd,bins=binsp,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evd)*decay_fraction/len(evd),range=(lower_range,upper_range),histtype='step')
-		n,bins,a 	 = plt.hist(binsp[1:]-np.diff(binsp)/2,label=r"production + decay mode",bins=binsp,lw=0.8,color="blue",fill=False,weights=nbp+nbd,range=(lower_range,upper_range),histtype='step')
-
-		plot_error_region2(n,1/np.sqrt(nV)*n, bins,"blue")
-		nI,binsI,aI = plt.hist(evi,label=r"interference sample",bins=bins,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
-		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
-		
-
-		plt.xlim(lower_range,upper_range)
-		labelkin(var,par)
-
-		plt.savefig("plots/"+par+"_truth/"+"all"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
-		plt.close()"""
 
 
 if("R_truth" not in os.listdir(PREFIX+"plots/")):
@@ -230,7 +220,7 @@ for va in var:
 			ax1 = plt.subplot(gs[0])
 			ax2 = plt.subplot(gs[1])
 			gs.update(wspace=0.03)
-
+			#nbin=128
 			#binning = np.linspace(lower_range, upper_range, nbin)
 			binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
 			hi		= rplot.Hist(binning);map(hi.Fill, evi)
@@ -285,51 +275,5 @@ for va in var:
 			
 			plt.savefig("plots/"+va+"_truth/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()
+			hdp.write("tua_ratio_"+va+"_"+p1+"_"+p2)
 
-
-
-
-
-
-"""for va in var:		
-	for p1 in RMPart:
-		for p2 in RMPartP:
-			if(p1==p2):
-				continue
-
-			para = parameters_RM(p1, p2, va)
-			lower_range=para[0];upper_range=para[1];nbin=para[2];up_l=para[3]
-
-			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)]
-			evi = np.clip(evi, lower_range, upper_range);evp = np.clip(evp, lower_range, upper_range);evd = np.clip(evd, lower_range, upper_range)
-			#ev = np.concatenate((evp, evd), axis=0)
-			#ev = np.clip(ev, lower_range, upper_range)
-
-			fig = plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
-
-
-			nbpV2,binspV2,apV2 = plt.hist(evp,bins=nbin,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evp)*prod_fraction,range=(lower_range,upper_range),histtype='step')
-			nbdV2,binsdV2,adV2 = plt.hist(evd,bins=binspV2,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evd)*decay_fraction,range=(lower_range,upper_range),histtype='step')
-			nV2,binsV2,aV2 	= plt.hist(binspV2[1:]-np.diff(binspV2)/2,label=r"production+decay",bins=binspV2,lw=0.5,color="blue",fill=False,weights=nbpV2+nbdV2,range=(lower_range,upper_range),histtype='step')
-
-			vnI2,vbinsI2,vaI2 = plt.hist(evi,label=r"interference",bins=nbin,lw=0.8,color="red",fill=False,normed=False,histtype='step')#,range=(lower_range,upper_range))
-			
-			plt.close()
-			plt.figure(num=None, figsize=(ratiox,ratioy), dpi=80, facecolor='w', edgecolor='k')
-			
-			nbp2,binsp2,ap2 = plt.hist(evp,bins=binspV2,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evp)*prod_fraction/len(evp),range=(lower_range,upper_range),histtype='step')
-			nbd2,binsd2,ad2 = plt.hist(evd,bins=binspV2,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evd)*decay_fraction/len(evd),range=(lower_range,upper_range),histtype='step')
-			n2,bins2,a2 	= plt.hist(binspV2[1:]-np.diff(binspV2)/2,label=r"production + decay mode",bins=binspV2,lw=0.8,color="blue",fill=False,weights=nbp2+nbd2,range=(lower_range,upper_range),histtype='step')
-			
-			nI,binsI,aI = plt.hist(evi,label=r"interference sample",bins=bins2,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
-			
-			plot_error_region2(n2,1/np.sqrt(nV2)*n2, bins2,"blue")
-			plot_error_region2(nI,1/np.sqrt(vnI2)*nI, binsI,"red")
-
-			plt.xlim(lower_range,upper_range)
-			labelRM(va,p1,p2)
-			plt.savefig("plots/"+va+"_truth/"+"all_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
-			plt.close()"""
