@@ -36,6 +36,7 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::cin;
+using std::to_string;
 
 int get_nevents(string fileName);
 MatrixXd get_eventdisplay(string fileName, int event);
@@ -70,83 +71,90 @@ int main(int argc, char const *argv[])
 	gSystem->Load("/home/salv/Dokumente/Masterarbeit/Delphes/libDelphes.so");
 
 	
-	string fileName = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
-	int nEvents = get_nevents(fileName);
-	MatrixXd ev = get_eventdisplay(fileName,1);
-	speichere("einevent",ev);
+	//string fileName = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
+	//int nEvents = get_nevents(fileName);
+	//MatrixXd ev = get_eventdisplay(fileName,1);
+	//speichere("einevent",ev);
 
 
 	string fileNames[3];
-	fileNames[0] = "samples/tua_LH_decay_wlep_tt_wbau_PY8_DELATL_50.root";
-	fileNames[1] = "samples/tua_LH_interference_wlep_tja_ta_PY8_DELATL_50.root";
-	fileNames[2] = "samples/tua_LH_production_wlep_tja_ta_PY8_DELATL_50.root";
+	string prefix = "/run/user/1000/gvfs/sftp:host=arrakis,user=slacagni/media/slacagni/Elements/big_generation/afterDELPHES_CMS/";
 
-	string filePPTNames[3];filePPTNames[0] = "data/dec_Photon_PT";filePPTNames[1] = "data/int_Photon_PT";filePPTNames[2] = "data/pro_Photon_PT";
-	string filePEtaNames[3];filePEtaNames[0] = "data/dec_Photon_Eta";filePEtaNames[1] = "data/int_Photon_Eta";filePEtaNames[2] = "data/pro_Photon_Eta";
-	string filePPhiNames[3];filePPhiNames[0] = "data/dec_Photon_Phi";filePPhiNames[1] = "data/int_Photon_Phi";filePPhiNames[2] = "data/pro_Photon_Phi";
+
+
+	for (int runnumber = 0; runnumber < 21; ++runnumber)
+	{
+		
+
+	fileNames[0] = prefix+"tua_LH_decay_LO_multileg_tt_wbua_2_+"to_string(runnumber)"+_PY8_DELCMS_50.root";
+	fileNames[1] = prefix+"tua_LH_interference_LO_multileg_tja_ta_2_+"to_string(runnumber)"+_PY8_DELCMS_50.root";
+	fileNames[2] = prefix+"tua_LH_production_LO_multileg_ta_taj_2_+"to_string(runnumber)"+_PY8_DELCMS_50.root";
+
+
+	string filePPTNames[3];		filePPTNames[0] = "data/dec_Photon_PT_"+to_string(runnumber);		filePPTNames[1] = "data/int_Photon_PT_"+to_string(runnumber);		filePPTNames[2] = "data/pro_Photon_PT_"+to_string(runnumber);
+	string filePEtaNames[3];	filePEtaNames[0] = "data/dec_Photon_Eta_"+to_string(runnumber);		filePEtaNames[1] = "data/int_Photon_Eta_"+to_string(runnumber);		filePEtaNames[2] = "data/pro_Photon_Eta_"+to_string(runnumber);
+	string filePPhiNames[3];	filePPhiNames[0] = "data/dec_Photon_Phi_"+to_string(runnumber);		filePPhiNames[1] = "data/int_Photon_Phi_"+to_string(runnumber);		filePPhiNames[2] = "data/pro_Photon_Phi_"+to_string(runnumber);
+
+	string fileWPTNames[3];		fileWPTNames[0] = "data/dec_WBoson_PT_"+to_string(runnumber);		fileWPTNames[1] = "data/int_WBoson_PT_"+to_string(runnumber);		fileWPTNames[2] = "data/pro_WBoson_PT_"+to_string(runnumber);
+	string fileWEtaNames[3];	fileWEtaNames[0] = "data/dec_WBoson_Eta_"+to_string(runnumber);		fileWEtaNames[1] = "data/int_WBoson_Eta_"+to_string(runnumber);		fileWEtaNames[2] = "data/pro_WBoson_Eta_"+to_string(runnumber);
+	string fileWPhiNames[3];	fileWPhiNames[0] = "data/dec_WBoson_Phi_"+to_string(runnumber);		fileWPhiNames[1] = "data/int_WBoson_Phi_"+to_string(runnumber);		fileWPhiNames[2] = "data/pro_WBoson_Phi_"+to_string(runnumber);
+	string fileWMNames[3];		fileWMNames[0] = "data/dec_WBoson_M_"+to_string(runnumber);			fileWMNames[1] = "data/int_WBoson_M_"+to_string(runnumber);			fileWMNames[2] = "data/pro_WBoson_M_"+to_string(runnumber);
+
+	string filetPTNames[3];		filetPTNames[0] = "data/dec_TopQuark_PT_"+to_string(runnumber);		filetPTNames[1] = "data/int_TopQuark_PT_"+to_string(runnumber);		filetPTNames[2] = "data/pro_TopQuark_PT_"+to_string(runnumber);
+	string filetEtaNames[3];	filetEtaNames[0] = "data/dec_TopQuark_Eta_"+to_string(runnumber);	filetEtaNames[1] = "data/int_TopQuark_Eta_"+to_string(runnumber);	filetEtaNames[2] = "data/pro_TopQuark_Eta_"+to_string(runnumber);
+	string filetPhiNames[3];	filetPhiNames[0] = "data/dec_TopQuark_Phi_"+to_string(runnumber);	filetPhiNames[1] = "data/int_TopQuark_Phi_"+to_string(runnumber);	filetPhiNames[2] = "data/pro_TopQuark_Phi_"+to_string(runnumber);
+	string filetMNames[3];		filetMNames[0] = "data/dec_TopQuark_M_"+to_string(runnumber);		filetMNames[1] = "data/int_TopQuark_M_"+to_string(runnumber);		filetMNames[2] = "data/pro_TopQuark_M_"+to_string(runnumber);
+
+	string filebPTNames[3];		filebPTNames[0] = "data/dec_BQuark_PT_"+to_string(runnumber);		filebPTNames[1] = "data/int_BQuark_PT_"+to_string(runnumber);		filebPTNames[2] = "data/pro_BQuark_PT_"+to_string(runnumber);
+	string filebEtaNames[3];	filebEtaNames[0] = "data/dec_BQuark_Eta_"+to_string(runnumber);		filebEtaNames[1] = "data/int_BQuark_Eta_"+to_string(runnumber);		filebEtaNames[2] = "data/pro_BQuark_Eta_"+to_string(runnumber);
+	string filebPhiNames[3];	filebPhiNames[0] = "data/dec_BQuark_Phi_"+to_string(runnumber);		filebPhiNames[1] = "data/int_BQuark_Phi_"+to_string(runnumber);		filebPhiNames[2] = "data/pro_BQuark_Phi_"+to_string(runnumber);
+	string filebMNames[3];		filebMNames[0] = "data/dec_BQuark_M_"+to_string(runnumber);			filebMNames[1] = "data/int_BQuark_M_"+to_string(runnumber);			filebMNames[2] = "data/pro_BQuark_M_"+to_string(runnumber);
+
+	string fileuPTNames[3];		fileuPTNames[0] = "data/dec_UQuark_PT_"+to_string(runnumber);		fileuPTNames[1] = "data/int_UQuark_PT_"+to_string(runnumber);		fileuPTNames[2] = "data/pro_UQuark_PT_"+to_string(runnumber);
+	string fileuEtaNames[3];	fileuEtaNames[0] = "data/dec_UQuark_Eta_"+to_string(runnumber);		fileuEtaNames[1] = "data/int_UQuark_Eta_"+to_string(runnumber);		fileuEtaNames[2] = "data/pro_UQuark_Eta_"+to_string(runnumber);
+	string fileuPhiNames[3];	fileuPhiNames[0] = "data/dec_UQuark_Phi_"+to_string(runnumber);		fileuPhiNames[1] = "data/int_UQuark_Phi_"+to_string(runnumber);		fileuPhiNames[2] = "data/pro_UQuark_Phi_"+to_string(runnumber);
+	string fileuMNames[3];		fileuMNames[0] = "data/dec_UQuark_M_"+to_string(runnumber);			fileuMNames[1] = "data/int_UQuark_M_"+to_string(runnumber);			fileuMNames[2] = "data/pro_UQuark_M_"+to_string(runnumber);
+
+	string filebJPTNames[3];	filebJPTNames[0] = "data/dec_bJet_PT_"+to_string(runnumber);		filebJPTNames[1] = "data/int_bJet_PT_"+to_string(runnumber);		filebJPTNames[2] = "data/pro_bJet_PT_"+to_string(runnumber);
+	string filebJEtaNames[3];	filebJEtaNames[0] = "data/dec_bJet_Eta_"+to_string(runnumber);		filebJEtaNames[1] = "data/int_bJet_Eta_"+to_string(runnumber);		filebJEtaNames[2] = "data/pro_bJet_Eta_"+to_string(runnumber);
+	string filebJPhiNames[3];	filebJPhiNames[0] = "data/dec_bJet_Phi_"+to_string(runnumber);		filebJPhiNames[1] = "data/int_bJet_Phi_"+to_string(runnumber);		filebJPhiNames[2] = "data/pro_bJet_Phi_"+to_string(runnumber);
+	string filebJMNames[3];		filebJMNames[0] = "data/dec_bJet_M_"+to_string(runnumber);			filebJMNames[1] = "data/int_bJet_M_"+to_string(runnumber);			filebJMNames[2] = "data/pro_bJet_M_"+to_string(runnumber);
+
+	string fileJPTNames[3];		fileJPTNames[0] = "data/dec_Jet_PT_"+to_string(runnumber);			fileJPTNames[1] = "data/int_Jet_PT_"+to_string(runnumber);			fileJPTNames[2] = "data/pro_Jet_PT_"+to_string(runnumber);
+	string fileJEtaNames[3];	fileJEtaNames[0] = "data/dec_Jet_Eta_"+to_string(runnumber);		fileJEtaNames[1] = "data/int_Jet_Eta_"+to_string(runnumber);		fileJEtaNames[2] = "data/pro_Jet_Eta_"+to_string(runnumber);
+	string fileJPhiNames[3];	fileJPhiNames[0] = "data/dec_Jet_Phi_"+to_string(runnumber);		fileJPhiNames[1] = "data/int_Jet_Phi_"+to_string(runnumber);		fileJPhiNames[2] = "data/pro_Jet_Phi_"+to_string(runnumber);
+	string fileJMNames[3];		fileJMNames[0] = "data/dec_Jet_M_"+to_string(runnumber);			fileJMNames[1] = "data/int_Jet_M_"+to_string(runnumber);			fileJMNames[2] = "data/pro_Jet_M_"+to_string(runnumber);
+
+	string fileLPTNames[3];		fileLPTNames[0] = "data/dec_Lepton_PT_"+to_string(runnumber);		fileLPTNames[1] = "data/int_Lepton_PT_"+to_string(runnumber);		fileLPTNames[2] = "data/pro_Lepton_PT_"+to_string(runnumber);
+	string fileLEtaNames[3];	fileLEtaNames[0] = "data/dec_Lepton_Eta_"+to_string(runnumber);		fileLEtaNames[1] = "data/int_Lepton_Eta_"+to_string(runnumber);		fileLEtaNames[2] = "data/pro_Lepton_Eta_"+to_string(runnumber);
+	string fileLPhiNames[3];	fileLPhiNames[0] = "data/dec_Lepton_Phi_"+to_string(runnumber);		fileLPhiNames[1] = "data/int_Lepton_Phi_"+to_string(runnumber);		fileLPhiNames[2] = "data/pro_Lepton_Phi_"+to_string(runnumber);
+	string fileLMNames[3];		fileLMNames[0] = "data/dec_Lepton_M_"+to_string(runnumber);			fileLMNames[1] = "data/int_Lepton_M_"+to_string(runnumber);			fileLMNames[2] = "data/pro_Lepton_M_"+to_string(runnumber);
+
+	string fileMETNames[3];		fileMETNames[0] = "data/dec_MET_"+to_string(runnumber);				fileMETNames[1] = "data/int_MET_"+to_string(runnumber);				fileMETNames[2] = "data/pro_MET_"+to_string(runnumber);
+	string fileMETEtaNames[3];	fileMETEtaNames[0] = "data/dec_MET_Eta_"+to_string(runnumber);		fileMETEtaNames[1] = "data/int_MET_Eta_"+to_string(runnumber);		fileMETEtaNames[2] = "data/pro_MET_Eta_"+to_string(runnumber);
+	string fileMETPhiNames[3];	fileMETPhiNames[0] = "data/dec_MET_Phi_"+to_string(runnumber);		fileMETPhiNames[1] = "data/int_MET_Phi_"+to_string(runnumber);		fileMETPhiNames[2] = "data/pro_MET_Phi_"+to_string(runnumber);
+
+	string fileWeightNames[3];	fileWeightNames[0] = "data/dec_weight_"+to_string(runnumber);		fileWeightNames[1] = "data/int_weight_"+to_string(runnumber);		fileWeightNames[2] = "data/pro_weight_"+to_string(runnumber);
+
+	string filetPRNames[3];		filetPRNames[0] = "data/dec_TopQuark_Photon_R_"+to_string(runnumber);		filetPRNames[1] = "data/int_TopQuark_Photon_R_"+to_string(runnumber);		filetPRNames[2] = "data/pro_TopQuark_Photon_R_"+to_string(runnumber);
+	string filetbRNames[3];		filetbRNames[0] = "data/dec_TopQuark_bJet_R_"+to_string(runnumber);			filetbRNames[1] = "data/int_TopQuark_bJet_R_"+to_string(runnumber);			filetbRNames[2] = "data/pro_TopQuark_bJet_R_"+to_string(runnumber);
+	string filetWRNames[3];		filetWRNames[0] = "data/dec_TopQuark_WBoson_R_"+to_string(runnumber);		filetWRNames[1] = "data/int_TopQuark_WBoson_R_"+to_string(runnumber);		filetWRNames[2] = "data/pro_TopQuark_WBoson_R_"+to_string(runnumber);
+	string filetjRNames[3];		filetjRNames[0] = "data/dec_TopQuark_LeadingJet_R_"+to_string(runnumber);	filetjRNames[1] = "data/int_TopQuark_LeadingJet_R_"+to_string(runnumber);	filetjRNames[2] = "data/pro_TopQuark_LeadingJet_R_"+to_string(runnumber);
+
+	string filetPMNames[3];		filetPMNames[0] = "data/dec_TopQuark_Photon_M_"+to_string(runnumber);		filetPMNames[1] = "data/int_TopQuark_Photon_M_"+to_string(runnumber);		filetPMNames[2] = "data/pro_TopQuark_Photon_M_"+to_string(runnumber);
+	string filetbMNames[3];		filetbMNames[0] = "data/dec_TopQuark_bJet_M_"+to_string(runnumber);			filetbMNames[1] = "data/int_TopQuark_bJet_M_"+to_string(runnumber);			filetbMNames[2] = "data/pro_TopQuark_bJet_M_"+to_string(runnumber);
+	string filetWMNames[3];		filetWMNames[0] = "data/dec_TopQuark_WBoson_M_"+to_string(runnumber);		filetWMNames[1] = "data/int_TopQuark_WBoson_M_"+to_string(runnumber);		filetWMNames[2] = "data/pro_TopQuark_WBoson_M_"+to_string(runnumber);
+	string filetjMNames[3];		filetjMNames[0] = "data/dec_TopQuark_LeadingJet_M_"+to_string(runnumber);	filetjMNames[1] = "data/int_TopQuark_LeadingJet_M_"+to_string(runnumber);	filetjMNames[2] = "data/pro_TopQuark_LeadingJet_M_"+to_string(runnumber);
+
+	string filePtRNames[3];		filePtRNames[0] = "data/dec_Photon_TopQuark_R_"+to_string(runnumber);		filePtRNames[1] = "data/int_Photon_TopQuark_R_"+to_string(runnumber);		filePtRNames[2] = "data/pro_Photon_TopQuark_R_"+to_string(runnumber);
+	string filePbRNames[3];		filePbRNames[0] = "data/dec_Photon_bJet_R_"+to_string(runnumber);			filePbRNames[1] = "data/int_Photon_bJet_R_"+to_string(runnumber);			filePbRNames[2] = "data/pro_Photon_bJet_R_"+to_string(runnumber);
+	string filePWRNames[3];		filePWRNames[0] = "data/dec_Photon_WBoson_R_"+to_string(runnumber);			filePWRNames[1] = "data/int_Photon_WBoson_R_"+to_string(runnumber);			filePWRNames[2] = "data/pro_Photon_WBoson_R_"+to_string(runnumber);
+	string filePjRNames[3];		filePjRNames[0] = "data/dec_Photon_LeadingJet_R_"+to_string(runnumber);		filePjRNames[1] = "data/int_Photon_LeadingJet_R_"+to_string(runnumber);		filePjRNames[2] = "data/pro_Photon_LeadingJet_R_"+to_string(runnumber);
 	
-
-	string fileWPTNames[3];fileWPTNames[0] = "data/dec_WBoson_PT";fileWPTNames[1] = "data/int_WBoson_PT";fileWPTNames[2] = "data/pro_WBoson_PT";
-	string fileWEtaNames[3];fileWEtaNames[0] = "data/dec_WBoson_Eta";fileWEtaNames[1] = "data/int_WBoson_Eta";fileWEtaNames[2] = "data/pro_WBoson_Eta";
-	string fileWPhiNames[3];fileWPhiNames[0] = "data/dec_WBoson_Phi";fileWPhiNames[1] = "data/int_WBoson_Phi";fileWPhiNames[2] = "data/pro_WBoson_Phi";
-	string fileWMNames[3];fileWMNames[0] = "data/dec_WBoson_M";fileWMNames[1] = "data/int_WBoson_M";fileWMNames[2] = "data/pro_WBoson_M";
-	
-
-	string filetPTNames[3];filetPTNames[0] = "data/dec_TopQuark_PT";filetPTNames[1] = "data/int_TopQuark_PT";filetPTNames[2] = "data/pro_TopQuark_PT";
-	string filetEtaNames[3];filetEtaNames[0] = "data/dec_TopQuark_Eta";filetEtaNames[1] = "data/int_TopQuark_Eta";filetEtaNames[2] = "data/pro_TopQuark_Eta";
-	string filetPhiNames[3];filetPhiNames[0] = "data/dec_TopQuark_Phi";filetPhiNames[1] = "data/int_TopQuark_Phi";filetPhiNames[2] = "data/pro_TopQuark_Phi";
-	string filetMNames[3];filetMNames[0] = "data/dec_TopQuark_M";filetMNames[1] = "data/int_TopQuark_M";filetMNames[2] = "data/pro_TopQuark_M";
-
-	string filebPTNames[3];filebPTNames[0] = "data/dec_BQuark_PT";filebPTNames[1] = "data/int_BQuark_PT";filebPTNames[2] = "data/pro_BQuark_PT";
-	string filebEtaNames[3];filebEtaNames[0] = "data/dec_BQuark_Eta";filebEtaNames[1] = "data/int_BQuark_Eta";filebEtaNames[2] = "data/pro_BQuark_Eta";
-	string filebPhiNames[3];filebPhiNames[0] = "data/dec_BQuark_Phi";filebPhiNames[1] = "data/int_BQuark_Phi";filebPhiNames[2] = "data/pro_BQuark_Phi";
-	string filebMNames[3];filebMNames[0] = "data/dec_BQuark_M";filebMNames[1] = "data/int_BQuark_M";filebMNames[2] = "data/pro_BQuark_M";
-
-	string fileuPTNames[3];fileuPTNames[0] = "data/dec_UQuark_PT";fileuPTNames[1] = "data/int_UQuark_PT";fileuPTNames[2] = "data/pro_UQuark_PT";
-	string fileuEtaNames[3];fileuEtaNames[0] = "data/dec_UQuark_Eta";fileuEtaNames[1] = "data/int_UQuark_Eta";fileuEtaNames[2] = "data/pro_UQuark_Eta";
-	string fileuPhiNames[3];fileuPhiNames[0] = "data/dec_UQuark_Phi";fileuPhiNames[1] = "data/int_UQuark_Phi";fileuPhiNames[2] = "data/pro_UQuark_Phi";
-	string fileuMNames[3];fileuMNames[0] = "data/dec_UQuark_M";fileuMNames[1] = "data/int_UQuark_M";fileuMNames[2] = "data/pro_UQuark_M";
-
-	string filebJPTNames[3];filebJPTNames[0] = "data/dec_bJet_PT";filebJPTNames[1] = "data/int_bJet_PT";filebJPTNames[2] = "data/pro_bJet_PT";
-	string filebJEtaNames[3];filebJEtaNames[0] = "data/dec_bJet_Eta";filebJEtaNames[1] = "data/int_bJet_Eta";filebJEtaNames[2] = "data/pro_bJet_Eta";
-	string filebJPhiNames[3];filebJPhiNames[0] = "data/dec_bJet_Phi";filebJPhiNames[1] = "data/int_bJet_Phi";filebJPhiNames[2] = "data/pro_bJet_Phi";
-	string filebJMNames[3];filebJMNames[0] = "data/dec_bJet_M";filebJMNames[1] = "data/int_bJet_M";filebJMNames[2] = "data/pro_bJet_M";
-
-	string fileJPTNames[3];fileJPTNames[0] = "data/dec_Jet_PT";fileJPTNames[1] = "data/int_Jet_PT";fileJPTNames[2] = "data/pro_Jet_PT";
-	string fileJEtaNames[3];fileJEtaNames[0] = "data/dec_Jet_Eta";fileJEtaNames[1] = "data/int_Jet_Eta";fileJEtaNames[2] = "data/pro_Jet_Eta";
-	string fileJPhiNames[3];fileJPhiNames[0] = "data/dec_Jet_Phi";fileJPhiNames[1] = "data/int_Jet_Phi";fileJPhiNames[2] = "data/pro_Jet_Phi";
-	string fileJMNames[3];fileJMNames[0] = "data/dec_Jet_M";fileJMNames[1] = "data/int_Jet_M";fileJMNames[2] = "data/pro_Jet_M";
-	
-	string fileLPTNames[3];fileLPTNames[0] = "data/dec_Lepton_PT";fileLPTNames[1] = "data/int_Lepton_PT";fileLPTNames[2] = "data/pro_Lepton_PT";
-	string fileLEtaNames[3];fileLEtaNames[0] = "data/dec_Lepton_Eta";fileLEtaNames[1] = "data/int_Lepton_Eta";fileLEtaNames[2] = "data/pro_Lepton_Eta";
-	string fileLPhiNames[3];fileLPhiNames[0] = "data/dec_Lepton_Phi";fileLPhiNames[1] = "data/int_Lepton_Phi";fileLPhiNames[2] = "data/pro_Lepton_Phi";
-	string fileLMNames[3];fileLMNames[0] = "data/dec_Lepton_M";fileLMNames[1] = "data/int_Lepton_M";fileLMNames[2] = "data/pro_Lepton_M";
-
-	string fileMETNames[3];fileMETNames[0] = "data/dec_MET";fileMETNames[1] = "data/int_MET";fileMETNames[2] = "data/pro_MET";
-	string fileMETEtaNames[3];fileMETEtaNames[0] = "data/dec_MET_Eta";fileMETEtaNames[1] = "data/int_MET_Eta";fileMETEtaNames[2] = "data/pro_MET_Eta";
-	string fileMETPhiNames[3];fileMETPhiNames[0] = "data/dec_MET_Phi";fileMETPhiNames[1] = "data/int_MET_Phi";fileMETPhiNames[2] = "data/pro_MET_Phi";
-	
-	string fileWeightNames[3];fileWeightNames[0] = "data/dec_weight";fileWeightNames[1] = "data/int_weight";fileWeightNames[2] = "data/pro_weight";
-
-	string filetPRNames[3];filetPRNames[0] = "data/dec_TopQuark_Photon_R";filetPRNames[1] = "data/int_TopQuark_Photon_R";filetPRNames[2] = "data/pro_TopQuark_Photon_R";
-	string filetbRNames[3];filetbRNames[0] = "data/dec_TopQuark_bJet_R";filetbRNames[1] = "data/int_TopQuark_bJet_R";filetbRNames[2] = "data/pro_TopQuark_bJet_R";
-	string filetWRNames[3];filetWRNames[0] = "data/dec_TopQuark_WBoson_R";filetWRNames[1] = "data/int_TopQuark_WBoson_R";filetWRNames[2] = "data/pro_TopQuark_WBoson_R";
-	string filetjRNames[3];filetjRNames[0] = "data/dec_TopQuark_LeadingJet_R";filetjRNames[1] = "data/int_TopQuark_LeadingJet_R";filetjRNames[2] = "data/pro_TopQuark_LeadingJet_R";
-
-	string filetPMNames[3];filetPMNames[0] = "data/dec_TopQuark_Photon_M";filetPMNames[1] = "data/int_TopQuark_Photon_M";filetPMNames[2] = "data/pro_TopQuark_Photon_M";
-	string filetbMNames[3];filetbMNames[0] = "data/dec_TopQuark_bJet_M";filetbMNames[1] = "data/int_TopQuark_bJet_M";filetbMNames[2] = "data/pro_TopQuark_bJet_M";
-	string filetWMNames[3];filetWMNames[0] = "data/dec_TopQuark_WBoson_M";filetWMNames[1] = "data/int_TopQuark_WBoson_M";filetWMNames[2] = "data/pro_TopQuark_WBoson_M";
-	string filetjMNames[3];filetjMNames[0] = "data/dec_TopQuark_LeadingJet_M";filetjMNames[1] = "data/int_TopQuark_LeadingJet_M";filetjMNames[2] = "data/pro_TopQuark_LeadingJet_M";
-
-	string filePtRNames[3];filePtRNames[0] = "data/dec_Photon_TopQuark_R";filePtRNames[1] = "data/int_Photon_TopQuark_R";filePtRNames[2] = "data/pro_Photon_TopQuark_R";
-	string filePbRNames[3];filePbRNames[0] = "data/dec_Photon_bJet_R";filePbRNames[1] = "data/int_Photon_bJet_R";filePbRNames[2] = "data/pro_Photon_bJet_R";
-	string filePWRNames[3];filePWRNames[0] = "data/dec_Photon_WBoson_R";filePWRNames[1] = "data/int_Photon_WBoson_R";filePWRNames[2] = "data/pro_Photon_WBoson_R";
-	string filePjRNames[3];filePjRNames[0] = "data/dec_Photon_LeadingJet_R";filePjRNames[1] = "data/int_Photon_LeadingJet_R";filePjRNames[2] = "data/pro_Photon_LeadingJet_R";
-
-	string filePtMNames[3];filePtMNames[0] = "data/dec_Photon_TopQuark_M";filePtMNames[1] = "data/int_Photon_TopQuark_M";filePtMNames[2] = "data/pro_Photon_TopQuark_M";
-	string filePbMNames[3];filePbMNames[0] = "data/dec_Photon_bJet_M";filePbMNames[1] = "data/int_Photon_bJet_M";filePbMNames[2] = "data/pro_Photon_bJet_M";
-	string filePWMNames[3];filePWMNames[0] = "data/dec_Photon_WBoson_M";filePWMNames[1] = "data/int_Photon_WBoson_M";filePWMNames[2] = "data/pro_Photon_WBoson_M";
-	string filePjMNames[3];filePjMNames[0] = "data/dec_Photon_LeadingJet_M";filePjMNames[1] = "data/int_Photon_LeadingJet_M";filePjMNames[2] = "data/pro_Photon_LeadingJet_M";
+	string filePtMNames[3];		filePtMNames[0] = "data/dec_Photon_TopQuark_M_"+to_string(runnumber);		filePtMNames[1] = "data/int_Photon_TopQuark_M_"+to_string(runnumber);		filePtMNames[2] = "data/pro_Photon_TopQuark_M_"+to_string(runnumber);
+	string filePbMNames[3];		filePbMNames[0] = "data/dec_Photon_bJet_M_"+to_string(runnumber);			filePbMNames[1] = "data/int_Photon_bJet_M_"+to_string(runnumber);			filePbMNames[2] = "data/pro_Photon_bJet_M_"+to_string(runnumber);
+	string filePWMNames[3];		filePWMNames[0] = "data/dec_Photon_WBoson_M_"+to_string(runnumber);			filePWMNames[1] = "data/int_Photon_WBoson_M_"+to_string(runnumber);			filePWMNames[2] = "data/pro_Photon_WBoson_M_"+to_string(runnumber);
+	string filePjMNames[3];		filePjMNames[0] = "data/dec_Photon_LeadingJet_M_"+to_string(runnumber);		filePjMNames[1] = "data/int_Photon_LeadingJet_M_"+to_string(runnumber);		filePjMNames[2] = "data/pro_Photon_LeadingJet_M_"+to_string(runnumber);
 
 
 	TFile* files[3];
@@ -484,7 +492,7 @@ int main(int argc, char const *argv[])
 		speichere(fileWeightNames[iFile], VWeight);
 
 
-		ofstream dat((fileNames[iFile]+"_Cut_Effs.txt").c_str());
+		ofstream dat((fileNames[iFile]+to_string(runnumber)+"_Cut_Effs.txt").c_str());
 		dat.is_open();
 		dat << "Events: " 			<< iE << "\n";
 		dat << "Eff Photon Cut: " 	<< iPho << " " << ((float(iPho)/float(iE))*100) << "%" << "\n";

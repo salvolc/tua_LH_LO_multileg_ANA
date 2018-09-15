@@ -20,9 +20,9 @@ for par in part:
 		os.chdir(PREFIX)
 
 
-sdp = 1573.+3732.
-decay_fraction = 1573./sdp
-prod_fraction = 3732./sdp
+sdp = 1571.+3370.
+decay_fraction = 1571./sdp
+prod_fraction = 3370./sdp
 
 
 
@@ -31,7 +31,8 @@ ratioy=4
 eps=0.001
 
 tfl = ROOT.TFile("tua_crosscheck_salvatore.root","recreate")
-
+sample_numbers=[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+sample_numbers=[1]
 for par in part:
 	for var in vari:
 		if(par == "Photon" and var=="M"):
@@ -39,15 +40,34 @@ for par in part:
 		para = parameters_kin("dec", var, par)
 		lower_range=para[0];upper_range=para[1];nbin=para[2];up_l=para[3]
 
-		evi = np.genfromtxt("data/"+"int"+"_"+par+"_"+var+"_truth.txt")
-		evd = np.genfromtxt("data/"+"dec"+"_"+par+"_"+var+"_truth.txt")
-		evp = np.genfromtxt("data/"+"pro"+"_"+par+"_"+var+"_truth.txt")
+		evi = np.genfromtxt("data/"+"int"+"_"+par+"_"+var+"_truth_1.txt")
+		evd = np.genfromtxt("data/"+"dec"+"_"+par+"_"+var+"_truth_1.txt")
+		evp = np.genfromtxt("data/"+"pro"+"_"+par+"_"+var+"_truth_1.txt")
 		evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 		evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 
 		binning = np.linspace(lower_range, upper_range, nbin)
-		hd = rplot.Hist(binning);map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
-		hp = rplot.Hist(binning);map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+		hd = rplot.Hist(binning)
+		hp = rplot.Hist(binning)
+
+		for sample_number in sample_numbers:
+			evi = np.genfromtxt("data/"+"int"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+			evd = np.genfromtxt("data/"+"dec"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+			evp = np.genfromtxt("data/"+"pro"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+
+			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
+			evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
+			
+			decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
+			prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+
+			sdp = decay_fraction+prod_fraction
+			decay_fraction = decay_fraction/sdp
+			prod_fraction = prod_fraction/sdp
+
+			map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
+			map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+
 
 		hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1)))
 		hp.linecolor = "blue";hp.linewidth = 1
@@ -65,6 +85,7 @@ for par in part:
 		plt.savefig("plots/"+par+"_truth/"+"decpro"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
 
+
 		gs = gridspec.GridSpec(2, 1, width_ratios=[1],height_ratios=[3,1]) 
 		f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 		ax1 = plt.subplot(gs[0])
@@ -74,10 +95,41 @@ for par in part:
 		#binning = np.linspace(lower_range, upper_range, nbin)
 		binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
 
-		hi		= rplot.Hist(binning);map(hi.Fill, evi)
-		hdp		= rplot.Hist(binning);map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction);map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
-		hd = rplot.Hist(binning);map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
-		hp = rplot.Hist(binning);map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+		hi		= rplot.Hist(binning)
+		hisys	= rplot.Hist(binning)
+		hdp		= rplot.Hist(binning)
+		hd = rplot.Hist(binning)
+		hp = rplot.Hist(binning)
+
+		hi.Sumw2(True)
+		hisys.Sumw2(True)
+		hdp.Sumw2(True)
+		hd.Sumw2(True)
+		hp.Sumw2(True)
+
+		for sample_number in sample_numbers:
+			evi = np.genfromtxt("data/"+"int"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+			evd = np.genfromtxt("data/"+"dec"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+			evp = np.genfromtxt("data/"+"pro"+"_"+par+"_"+var+"_truth_"+str(sample_number)+".txt")
+
+			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
+			evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
+			
+			decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
+			prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+
+			sdp = decay_fraction+prod_fraction
+			decay_fraction = decay_fraction/sdp
+			prod_fraction = prod_fraction/sdp
+
+			map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
+			map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+			map(hi.Fill, evi)
+			map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction)
+			map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
+			map(hisys.Fill, evi)
+
+		#np.genfromtxt
 
 		hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
 		hp.linecolor = "blue";hp.linewidth = 1
@@ -121,8 +173,8 @@ for par in part:
 			ax1.set_ylim(ymin=0)
 
 		labelkinax(ax1,ax2,var,par)
-		leg = ax1.legend(title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
-		leg.get_title().set_fontsize('small')
+		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
+		#leg.get_title().set_fontsize('small')
 		
 
 		plt.savefig("plots/"+par+"_truth/"+"decproint"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
@@ -130,35 +182,35 @@ for par in part:
 		hdp.write("tua_ratio_"+par+"_"+var)
 
 
-wpro=np.genfromtxt("data/pro_weight.txt");hwp=rplot.Hist(np.linspace(0,np.max(wpro)*1.1,64));map(hwp.Fill, wpro)
-rplt.hist(hwp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
-rplt.errorbar(hwp,fmt="none",lw=0.6,color="blue",label="_nolegend_")
-plt.xlabel("weights")
-plt.ylabel("number of entries",rotation=90)
-plt.grid(alpha=0.7)
-plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.savefig("weights_production.pdf",bbox_inches='tight')
-plt.close()
+# wpro=np.genfromtxt("data/pro_weight.txt");hwp=rplot.Hist(np.linspace(0,np.max(wpro)*1.1,64));map(hwp.Fill, wpro)
+# rplt.hist(hwp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+# rplt.errorbar(hwp,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+# plt.xlabel("weights")
+# plt.ylabel("number of entries",rotation=90)
+# plt.grid(alpha=0.7)
+# plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# plt.savefig("weights_production.pdf",bbox_inches='tight')
+# plt.close()
 
-wdec=np.genfromtxt("data/dec_weight.txt");hwd=rplot.Hist(np.linspace(0,np.max(wdec)*1.1,64));map(hwd.Fill, wdec)
-rplt.hist(hwd,fmt="none",lw=0.4,color="blue",label="_nolegend_")
-rplt.errorbar(hwd,fmt="none",lw=0.6,color="blue",label="_nolegend_")
-plt.xlabel("weights")
-plt.ylabel("number of entries",rotation=90)
-plt.grid(alpha=0.7)
-plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.savefig("weights_decay.pdf",bbox_inches='tight')
-plt.close()
+# wdec=np.genfromtxt("data/dec_weight.txt");hwd=rplot.Hist(np.linspace(0,np.max(wdec)*1.1,64));map(hwd.Fill, wdec)
+# rplt.hist(hwd,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+# rplt.errorbar(hwd,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+# plt.xlabel("weights")
+# plt.ylabel("number of entries",rotation=90)
+# plt.grid(alpha=0.7)
+# plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# plt.savefig("weights_decay.pdf",bbox_inches='tight')
+# plt.close()
 
-wint=np.genfromtxt("data/int_weight.txt");hwi=rplot.Hist(np.linspace(0,np.max(wint)*1.1,64));map(hwi.Fill, wint)
-rplt.hist(hwi,fmt="none",lw=0.4,color="blue",label="_nolegend_")
-rplt.errorbar(hwi,fmt="none",lw=0.6,color="blue",label="_nolegend_")
-plt.xlabel("weights")
-plt.ylabel("number of entries",rotation=90)
-plt.grid(alpha=0.7)
-plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.savefig("weights_interference.pdf",bbox_inches='tight')
-plt.close()
+# wint=np.genfromtxt("data/int_weight.txt");hwi=rplot.Hist(np.linspace(0,np.max(wint)*1.1,64));map(hwi.Fill, wint)
+# rplt.hist(hwi,fmt="none",lw=0.4,color="blue",label="_nolegend_")
+# rplt.errorbar(hwi,fmt="none",lw=0.6,color="blue",label="_nolegend_")
+# plt.xlabel("weights")
+# plt.ylabel("number of entries",rotation=90)
+# plt.grid(alpha=0.7)
+# plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# plt.savefig("weights_interference.pdf",bbox_inches='tight')
+# plt.close()
 
 
 
@@ -189,15 +241,33 @@ for va in var:
 			para = parameters_RM(p1, p2, va)
 			lower_range=para[0];upper_range=para[1];nbin=para[2];up_l=para[3]
 
-			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+"_truth.txt")
-			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+"_truth.txt")
+			evi = np.genfromtxt("data/int_"+p1+"_"+p2+"_"+va+"_truth_1.txt")
+			evd = np.genfromtxt("data/dec_"+p1+"_"+p2+"_"+va+"_truth_1.txt")
+			evp = np.genfromtxt("data/pro_"+p1+"_"+p2+"_"+va+"_truth_1.txt")
 			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 			evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 
 			binning = np.linspace(lower_range, upper_range, nbin)
-			hd = rplot.Hist(binning);map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
-			hp = rplot.Hist(binning);map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+			hd = rplot.Hist(binning)
+			hp = rplot.Hist(binning)
+
+			for sample_number in sample_numbers:
+				evi = np.genfromtxt("data/"+"int"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+				evd = np.genfromtxt("data/"+"dec"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+				evp = np.genfromtxt("data/"+"pro"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+
+				evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
+				evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
+				
+				decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
+				prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+
+				sdp = decay_fraction+prod_fraction
+				decay_fraction = decay_fraction/sdp
+				prod_fraction = prod_fraction/sdp
+
+				map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
+				map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
 
 			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1)))
 			hp.linecolor = "blue";hp.linewidth = 1
@@ -223,10 +293,31 @@ for va in var:
 			#nbin=128
 			#binning = np.linspace(lower_range, upper_range, nbin)
 			binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
-			hi		= rplot.Hist(binning);map(hi.Fill, evi)
-			hdp		= rplot.Hist(binning);map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction);map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
-			hd = rplot.Hist(binning);map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
-			hp = rplot.Hist(binning);map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+			hi		= rplot.Hist(binning)
+			hdp		= rplot.Hist(binning)
+			hd = rplot.Hist(binning)
+			hp = rplot.Hist(binning)
+
+			for sample_number in sample_numbers:
+				evi = np.genfromtxt("data/"+"int"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+				evd = np.genfromtxt("data/"+"dec"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+				evp = np.genfromtxt("data/"+"pro"+"_"+p1+"_"+p2+"_"+va+"_truth_"+str(sample_number)+".txt")
+
+				evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
+				evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
+				
+				decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
+				prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+
+				sdp = decay_fraction+prod_fraction
+				decay_fraction = decay_fraction/sdp
+				prod_fraction = prod_fraction/sdp
+
+				map(hd.Fill, evd,np.ones_like(evd)*decay_fraction)
+				map(hp.Fill, evp,np.ones_like(evp)*prod_fraction)
+				map(hi.Fill, evi)
+				map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction)
+				map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
 
 			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
 			hp.linecolor = "blue";hp.linewidth = 1
@@ -270,8 +361,8 @@ for va in var:
 			ax2.set_ylim(0.5,1.5)
 
 			labelRMax(ax1,ax2,va,p1,p2)
-			leg = ax1.legend(title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
-			leg.get_title().set_fontsize('small')
+			leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
+			#leg.get_title().set_fontsize('small')
 			
 			plt.savefig("plots/"+va+"_truth/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()

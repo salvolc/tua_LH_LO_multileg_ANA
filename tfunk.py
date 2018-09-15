@@ -318,6 +318,39 @@ def set_dyn_binning(va,lo,up,n,err=0.05):
 
 	return binning
 
+def set_dyn_binning2(va,oldbins,err=0.05):
+	#eps=0.0001
+	#va = va[(np.abs(va)>up_l) & (va!=999.9)]
+	#va = np.clip(va,lo+eps,up-eps)
+	binning = oldbins
+	h1 = rplot.Hist(binning)
+	map(h1.Fill,va)
+	h1.Scale(1/(h1.Integral(0,h1.GetNbinsX()+1)))
+	#print(binning)
+
+	for i in range(n-1,1,-1):
+		#print(i," ",binning[i])
+		#if (h1.GetBinContent(i)==0):
+			#print(0)
+		#	continue
+		#print(h1.GetBinError(i)/h1.GetBinContent(i))
+
+		if (h1.GetBinContent(i)==0):
+			binning = np.delete(binning, i-1)
+			h1 = rplot.Hist(binning)
+			map(h1.Fill,va)
+			h1.Scale(1/(h1.Integral(0,h1.GetNbinsX()+1)))
+			continue
+
+		if (h1.GetBinError(i)/h1.GetBinContent(i)) > err:
+			binning = np.delete(binning, i-1)
+			h1 = rplot.Hist(binning)
+			map(h1.Fill,va)
+			h1.Scale(1/(h1.Integral(0,h1.GetNbinsX()+1)))
+			continue
+
+	return binning
+
 
 def KMS(a,b):
 	na = len(a)
