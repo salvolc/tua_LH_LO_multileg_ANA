@@ -50,3 +50,4 @@ for p in paths:
   plt.grid(alpha=0.5,which='both',axis='y')
   plt.grid(alpha=0.5,which='minor',axis='x')
   plt.savefig(pspl+"_eff.pdf")
+  plt.clf()

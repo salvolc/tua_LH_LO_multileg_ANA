@@ -190,7 +190,7 @@ for par in part:
 		rplt.errorbar(hdp,fmt="none",axes=ax2,lw=0.6,color="green",label="_nolegend_")
 
 
-		ax2.set_ylabel("Dec+Pro/Int")
+		ax2.set_ylabel("(Dec.+Pro.)/Int.")
 		ax2.grid(alpha=0.6)
 
 		ax1.set_xlim(lower_range,upper_range)
@@ -198,8 +198,8 @@ for par in part:
 		ax2.set_ylim(0.5,1.5)
 
 		labelkinax(ax1,ax2,var,par)
-		leg = ax1.legend(title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
-		leg.get_title().set_fontsize('small')
+		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
+		#leg.get_title().set_fontsize('small')
 
 
 
@@ -427,7 +427,7 @@ for va in var:
 			#rplt.hist(hi,fmt="none",axes=ax2,lw=0.6,color="black",label="_nolegend_")
 
 
-			ax2.set_ylabel("Dec+Pro/Int")
+			ax2.set_ylabel("(Dec.+Pro.)/Int")
 			#ax2.legend(loc="best")
 			ax2.grid(alpha=0.6)
 
@@ -436,8 +436,8 @@ for va in var:
 			ax2.set_ylim(0.5,1.5)
 
 			labelRMax(ax1,ax2,va,p1,p2)
-			leg = ax1.legend(title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
-			leg.get_title().set_fontsize('small')
+			leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
+			#leg.get_title().set_fontsize('small')
 			
 			plt.savefig("plots/"+va+"/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()

@@ -162,7 +162,7 @@ for par in part:
 		#hi.Divide(hi)
 		#rplt.errorbar(hi,fmt="none",axes=ax2,lw=0.6,color="black",label="_nolegend_")
 
-		ax2.set_ylabel("Dec+Pro/Int")
+		ax2.set_ylabel("(Dec.+Pro.)/Int.")
 		ax2.grid(alpha=0.6)
 
 		ax1.set_xlim(lower_range,upper_range)
@@ -352,7 +352,8 @@ for va in var:
 			#rplt.hist(hi,fmt="none",axes=ax2,lw=0.6,color="black",label="_nolegend_")
 
 
-			ax2.set_ylabel("Dec+Pro/Int")
+			ax2.set_ylabel("(Dec.+Pro.)/Int.")
+
 			#ax2.legend(loc="best")
 			ax2.grid(alpha=0.6)
 
