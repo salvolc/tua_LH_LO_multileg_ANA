@@ -171,6 +171,7 @@ for par in part:
 
 		if par == "Photon" and var=="PT":
 			ax1.set_ylim(ymin=0)
+			ax2.set_ylim(0.5,1.5)
 
 		labelkinax(ax1,ax2,var,par)
 		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")

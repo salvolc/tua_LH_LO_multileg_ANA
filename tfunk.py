@@ -106,8 +106,8 @@ def parameters_RM(p1,p2,va):
 				lower_range = 150
 				upper_range = 800
 			if p2 == "UQuark":
-				lower_range = 125
-				upper_range = 220
+				lower_range = 100
+				upper_range = 400
 				nbin=80
 		if p1 =="TopQuark":
 			lower_range = 150
@@ -236,9 +236,9 @@ def labelRM(va,p1,p2):
 	plt.grid(alpha=0.5)
 	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 	plt.legend(loc="best")
-	if p1 == "Photon" and p2=="UQuark" and va=="M":
-		plt.yscale("log")
-		plt.ylim(0.0005,0.37)
+	#if p1 == "Photon" and p2=="UQuark" and va=="M":
+	#	plt.yscale("log")
+	#	plt.ylim(0.0005,0.37)
 
 def labelRMax(ax,ax2,va,p1,p2):
 	vari = r"$"
@@ -281,9 +281,9 @@ def labelRMax(ax,ax2,va,p1,p2):
 	ax2.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax2.grid(alpha=0.5)
 	ax2.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-	if p1 == "Photon" and p2=="UQuark" and va=="M":
-		ax.set_yscale("log")
-		ax.set_ylim(0.0005,0.37)
+	#if p1 == "Photon" and p2=="UQuark" and va=="M":
+	#	ax.set_yscale("log")
+	#	ax.set_ylim(0.0005,0.37)
 
 def set_dyn_binning(va,lo,up,n,err=0.05):
 	#eps=0.0001

@@ -199,6 +199,7 @@ for par in part:
 
 		if par == "Photon" and var=="PT":
 			ax1.set_ylim(ymin=0)
+			ax2.set_ylim(0.75,1.25)
 
 		labelkinax(ax1,ax2,var,par)
 		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
@@ -436,6 +437,12 @@ for va in var:
 			ax1.set_xlim(lower_range,upper_range)
 			ax2.set_xlim(lower_range,upper_range)
 			ax2.set_ylim(0.5,1.5)
+
+			if p1 == "Photon":
+				if p2 == "UQuark":
+					if va == "M":
+						ax2.set_ylim(0,3)
+
 
 			labelRMax(ax1,ax2,va,p1,p2)
 			leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
