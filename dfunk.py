@@ -165,7 +165,7 @@ def labelkin(va,par):
 	if par == "TopQuark":
 		label += r"(t)$"
 	if par == "bJet":
-		label += r"(bJet)$"
+		label += r"(b\!-\!jet)$"
 	if par == "WBoson":
 		label += r"(W)$"
 	if par == "Jet":
@@ -173,7 +173,7 @@ def labelkin(va,par):
 	if va == "PT" or va == "M":
 		label += "/GeV"
 	plt.xlabel(label)
-	plt.ylabel("number of entries (normalized)",rotation=90)
+	plt.ylabel("number of events (normalized)/GeV",rotation=90)
 	ax = plt.gca()
 	ax.yaxis.set_label_coords(-0.08,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
@@ -202,15 +202,15 @@ def labelkinax(ax,ax2,va,par):
 	if par == "TopQuark":
 		label += r"(t)$"
 	if par == "bJet":
-		label += r"(bJet)$"
+		label += r"(b\!-\!jet)$"
 	if par == "WBoson":
 		label += r"(W)$"
 	if par == "Jet":
-		label += r"(Jet)$"
+		label += r"(jet)$"
 	if va == "PT" or va == "M":
 		label += "/GeV"
 	#ax.xlabel(label)
-	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.set_ylabel("number of events (normalized)/GeV",rotation=90)
 	ax.yaxis.set_label_coords(-0.08,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax.grid(alpha=0.5)
@@ -247,18 +247,18 @@ def labelRM(va,p1,p2):
 	if p2 == "TopQuark":
 		parts += r"t"
 	if p2 == "bJet":
-		parts += r"bJet"
+		parts += r"b-jet"
 	if p2 == "WBoson":
 		parts += r"W"
 	if p2 == "LeadingJet":
-		parts += r"Jet"
+		parts += r"jet"
 
 	einh = ""
 	if va == "M":
 		einh += "/GeV"
 
 	plt.xlabel(vari+"("+parts+")"+r"$"+einh)
-	plt.ylabel("number of entries (normalized)",rotation=90)
+	plt.ylabel("number of events (normalized)/GeV",rotation=90)
 	ax = plt.gca()
 	ax.yaxis.set_label_coords(-0.08,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
@@ -289,18 +289,18 @@ def labelRMax(ax,ax2,va,p1,p2):
 	if p2 == "TopQuark":
 		parts += r"t"
 	if p2 == "bJet":
-		parts += r"bJet"
+		parts += r"b-jet"
 	if p2 == "WBoson":
 		parts += r"W"
 	if p2 == "LeadingJet":
-		parts += r"Jet"
+		parts += r"jet"
 
 	einh = ""
 	if va == "M":
 		einh += "/GeV"
 
 	#ax.xlabel(vari+"("+parts+")"+r"$"+einh)
-	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.set_ylabel("number of events (normalized)/GeV",rotation=90)
 	ax.yaxis.set_label_coords(-0.08,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax.grid(alpha=0.5)

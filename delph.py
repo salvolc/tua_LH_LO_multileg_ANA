@@ -71,17 +71,23 @@ for par in part:
 
 		hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1)))
 		hp.linecolor = "blue";hp.linewidth = 1
-		rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production sample")
+		rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production mode")
 		rplt.errorbar(hp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
 
 		hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1)))
 		hd.linecolor = "red";hd.linewidth = 1
-		rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay sample")
+		rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay mode")
 		rplt.errorbar(hd,fmt="none",lw=0.4,color="red",label="_nolegend_")
 
 		plt.xlim(lower_range,upper_range)
 		labelkin(var,par)
 		
+		left = lower_range
+		right = upper_range
+		ax = plt.gca()
+		bottom, top = ax.get_ylim()
+		ax.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level")
+
 		plt.savefig("plots/"+par+"/"+"decpro"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
 
@@ -123,24 +129,24 @@ for par in part:
 			map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction)
 			map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
 
-		hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
+		hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hp.linecolor = "blue";hp.linewidth = 1
-		rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production sample")
+		rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production mode")
 		rplt.errorbar(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="_nolegend_")
 
-		hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1))*decay_fraction,"width")
+		hd.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hd.linecolor = "red";hd.linewidth = 1
-		rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay sample")
+		rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay mode")
 		rplt.errorbar(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="_nolegend_")
 
 		hi.Scale(1/(hi.Integral(0,hi.GetNbinsX()+1)),"width")
 		hi.linecolor = "black";hi.linewidth = 1
-		rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference sample")
+		rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference mode")
 		rplt.errorbar(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="_nolegend_")
 
 		hdp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hdp.linecolor = "green";hdp.linewidth = 1
-		rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production sample")
+		rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production mode")
 		rplt.errorbar(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="_nolegend_")
 
 		print(par + " " + var + " KS Test")
@@ -205,7 +211,7 @@ for par in part:
 		n,bins,a 	 = plt.hist(binsp[1:]-np.diff(binsp)/2,label=r"production + decay mode",bins=binsp,lw=0.8,color="blue",fill=False,weights=nbp+nbd,range=(lower_range,upper_range),histtype='step')
 
 		plot_error_region2(n,1/np.sqrt(nV)*n, bins,"blue")
-		nI,binsI,aI = plt.hist(evi,label=r"interference sample",bins=bins,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
+		nI,binsI,aI = plt.hist(evi,label=r"interference mode",bins=bins,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),range=(lower_range,upper_range),histtype='step')
 		plot_error_region2(nI,1/np.sqrt(vnI)*nI, binsI,"red")
 		
 
@@ -274,17 +280,23 @@ for va in var:
 
 			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1)))
 			hp.linecolor = "blue";hp.linewidth = 1
-			rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production sample")
+			rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production mode")
 			rplt.errorbar(hp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
 
 			hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1)))
 			hd.linecolor = "red";hd.linewidth = 1
-			rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay sample")
+			rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay mode")
 			rplt.errorbar(hd,fmt="none",lw=0.4,color="red",label="_nolegend_")
 
 			plt.xlim(lower_range,upper_range)
 			labelRM(va,p1,p2)
-			
+
+			left = lower_range
+			right = upper_range
+			ax = plt.gca()
+			bottom, top = ax.get_ylim()
+			ax.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"truth level")
+				
 			plt.savefig("plots/"+va+"/"+"decpro"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()
 
@@ -322,24 +334,24 @@ for va in var:
 				map(hdp.Fill, evd,np.ones_like(evd)*decay_fraction)
 				map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
 
-			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
+			hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hp.linecolor = "blue";hp.linewidth = 1
-			rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production sample")
+			rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production mode")
 			rplt.errorbar(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="_nolegend_")
 
-			hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1))*decay_fraction,"width")
+			hd.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hd.linecolor = "red";hd.linewidth = 1
-			rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay sample")
+			rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay mode")
 			rplt.errorbar(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="_nolegend_")
 
 			hi.Scale(1/(hi.Integral(0,hi.GetNbinsX()+1)),"width")
 			hi.linecolor = "black";hi.linewidth = 1
-			rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference sample")
+			rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference mode")
 			rplt.errorbar(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="_nolegend_")
 
 			hdp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hdp.linecolor = "green";hdp.linewidth = 1
-			rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production sample")
+			rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production mode")
 			rplt.errorbar(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="_nolegend_")
 
 			print(p1 + " " + p2 + " " + va + " KS Test")
@@ -402,7 +414,7 @@ for va in var:
 			nbd2,binsd2,ad2 = plt.hist(evd,bins=binspV2,lw=0.5,alpha=0.0,color="blue",fill=False,weights=np.ones_like(evd)*decay_fraction/len(evd),range=(lower_range,upper_range),histtype='step')
 			n2,bins2,a2 	= plt.hist(binspV2[1:]-np.diff(binspV2)/2,label=r"production + decay mode",bins=binspV2,lw=0.8,color="blue",fill=False,weights=nbp2+nbd2,range=(lower_range,upper_range),histtype='step')
 			
-			nI,binsI,aI = plt.hist(evi,label=r"interference sample",bins=bins2,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
+			nI,binsI,aI = plt.hist(evi,label=r"interference mode",bins=bins2,lw=0.8,color="red",fill=False,weights=np.ones_like(evi)/float(len(evi)),histtype='step')#,range=(lower_range,upper_range))
 			
 			plot_error_region2(n2,1/np.sqrt(nV2)*n2, bins2,"blue")
 			plot_error_region2(nI,1/np.sqrt(vnI2)*nI, binsI,"red")

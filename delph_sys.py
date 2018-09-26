@@ -90,24 +90,24 @@ for par in part:
 			map(hisys.Fill, evi)
 
 
-		hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
+		hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hp.linecolor = "blue";hp.linewidth = 1
-		rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production sample")
+		rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production mode")
 		rplt.errorbar(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="_nolegend_")
 
-		hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1))*decay_fraction,"width")
+		hd.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hd.linecolor = "red";hd.linewidth = 1
-		rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay sample")
+		rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay mode")
 		rplt.errorbar(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="_nolegend_")
 
 		hi.Scale(1/(hi.Integral(0,hi.GetNbinsX()+1)),"width")
 		hi.linecolor = "black";hi.linewidth = 1
-		rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference sample")
+		rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference mode")
 		rplt.errorbar(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="_nolegend_")
 
 		hdp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 		hdp.linecolor = "green";hdp.linewidth = 1
-		rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production sample")
+		rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production mode")
 		rplt.errorbar(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="_nolegend_")
 
 		f = open("../scalescan/scalevarexp/scale_"+var+"_"+par+"_delph.txt")
@@ -174,7 +174,7 @@ for par in part:
 
 
 		hisys.linecolor = "magenta";hisys.linewidth = 1
-		#rplt.hist(hisys,fmt="none",axes=ax1,lw=0.4,color="black",label="interference sample")
+		#rplt.hist(hisys,fmt="none",axes=ax1,lw=0.4,color="black",label="interference mode")
 		#rplt.errorbar(hisys,fmt="none",axes=ax1,lw=0.4,color="magenta",label="_nolegend_")
 
 
@@ -201,7 +201,10 @@ for par in part:
 		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
 		#leg.get_title().set_fontsize('small')
 
-
+		left = lower_range
+		right = upper_range
+		bottom, top = ax1.get_ylim()
+		ax1.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level")
 
 		plt.savefig("plots/"+par+"/"+"decproint"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
@@ -276,12 +279,12 @@ for va in var:
 
 			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1)))
 			hp.linecolor = "blue";hp.linewidth = 1
-			rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production sample")
+			rplt.hist(hp,fmt="none",lw=0.4,color="blue",label="production mode")
 			rplt.errorbar(hp,fmt="none",lw=0.4,color="blue",label="_nolegend_")
 
 			hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1)))
 			hd.linecolor = "red";hd.linewidth = 1
-			rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay sample")
+			rplt.hist(hd,fmt="none",lw=0.4,color="red",label="decay mode")
 			rplt.errorbar(hd,fmt="none",lw=0.4,color="red",label="_nolegend_")
 
 			plt.xlim(lower_range,upper_range)
@@ -327,26 +330,26 @@ for va in var:
 				map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
 				map(hisys.Fill, evi)
 
-			hp.Scale(1/(hp.Integral(0,hp.GetNbinsX()+1))*prod_fraction,"width")
+
+			hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hp.linecolor = "blue";hp.linewidth = 1
-			rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production sample")
+			rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production mode")
 			rplt.errorbar(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="_nolegend_")
 
-			hd.Scale(1/(hd.Integral(0,hd.GetNbinsX()+1))*decay_fraction,"width")
+			hd.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hd.linecolor = "red";hd.linewidth = 1
-			rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay sample")
+			rplt.hist(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="decay mode")
 			rplt.errorbar(hd,fmt="none",axes=ax1,lw=0.4,color="red",label="_nolegend_")
 
 			hi.Scale(1/(hi.Integral(0,hi.GetNbinsX()+1)),"width")
 			hi.linecolor = "black";hi.linewidth = 1
-			rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference sample")
+			rplt.hist(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="interference mode")
 			rplt.errorbar(hi,fmt="none",axes=ax1,lw=0.4,color="black",label="_nolegend_")
 
 			hdp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hdp.linecolor = "green";hdp.linewidth = 1
-			rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production sample")
+			rplt.hist(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="decay + production mode")
 			rplt.errorbar(hdp,fmt="none",axes=ax1,lw=0.4,color="green",label="_nolegend_")
-
 
 
 			f = open("../scalescan/scalevarexp/scale_"+p1+"_"+p2+"_"+va+"_delph.txt")
@@ -436,9 +439,14 @@ for va in var:
 			ax2.set_ylim(0.5,1.5)
 
 			labelRMax(ax1,ax2,va,p1,p2)
-			leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")
+			leg = ax1.legend()#title=r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level",fontsize="small")
 			#leg.get_title().set_fontsize('small')
-			
+			#s = r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level"
+			left = lower_range
+			right = upper_range
+			bottom, top = ax1.get_ylim()
+			ax1.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level")
+
 			plt.savefig("plots/"+va+"/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()
 			hdp.write("tua_ratio_"+va+"_"+p1+"_"+p2)

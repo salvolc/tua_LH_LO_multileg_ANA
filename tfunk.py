@@ -57,7 +57,7 @@ def parameters_kin(sam,var,par):
 	if(par == "Photon" and var=="PT"):
 		up_l=20
 		upper_range=800
-		lower_range=20
+		lower_range=0
 		nbin=default_nbins
 	if(par == "BQuark" and var=="PT"):
 		upper_range=400
@@ -143,7 +143,7 @@ def labelkin(va,par):
 	if va == "PT" or va == "M":
 		label += "/GeV"
 	plt.xlabel(label)
-	plt.ylabel("number of entries (normalized)",rotation=90)
+	plt.ylabel("number of events (normalized)/GeV",rotation=90)
 	ax = plt.gca()
 	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
@@ -180,7 +180,7 @@ def labelkinax(ax,ax2,va,par):
 	if va == "PT" or va == "M":
 		label += "/GeV"
 	#ax.set_xlabel(label)
-	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.set_ylabel("number of events (normalized)/GeV",rotation=90)
 	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax.grid(alpha=0.5)
@@ -229,7 +229,7 @@ def labelRM(va,p1,p2):
 		einh += "/GeV"
 
 	plt.xlabel(vari+"("+parts+")"+r"$"+einh)
-	plt.ylabel("number of entries (normalized)",rotation=90)
+	plt.ylabel("number of events (normalized)/GeV",rotation=90)
 	ax = plt.gca()
 	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
@@ -270,7 +270,7 @@ def labelRMax(ax,ax2,va,p1,p2):
 		einh += "/GeV"
 
 	#ax.set_xlabel(vari+"("+parts+")"+r"$"+einh)
-	ax.set_ylabel("number of entries (normalized)",rotation=90)
+	ax.set_ylabel("number of events (normalized)/GeV",rotation=90)
 	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax.grid(alpha=0.5)
