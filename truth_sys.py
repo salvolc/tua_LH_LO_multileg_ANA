@@ -332,7 +332,7 @@ for va in var:
 				map(hdp.Fill, evp,np.ones_like(evp)*prod_fraction)
 				map(hisys.Fill, evi)
 
-			hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1))"width")
+			hp.Scale(1/(hdp.Integral(0,hdp.GetNbinsX()+1)),"width")
 			hp.linecolor = "blue";hp.linewidth = 1
 			rplt.hist(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="production mode")
 			rplt.errorbar(hp,fmt="none",axes=ax1,lw=0.4,color="blue",label="_nolegend_")

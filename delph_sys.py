@@ -33,7 +33,7 @@ eps=0.001
 tfl = ROOT.TFile("tua_crosscheck_salvatore.root","recreate")
 sample_numbers=[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
-for par in part:
+"""for par in part:
 	for var in vari:
 		if(par == "Photon" and var=="M"):
 			continue
@@ -208,6 +208,7 @@ for par in part:
 
 		plt.savefig("plots/"+par+"/"+"decproint"+"_"+par+"_"+var+".pdf",bbox_inches='tight')
 		plt.close()
+"""
 
 
 
@@ -221,21 +222,24 @@ for par in part:
 
 
 
-
-if("R_truth" not in os.listdir(PREFIX+"plots/")):
+if("R" not in os.listdir(PREFIX+"plots/")):
 	os.chdir(PREFIX+"plots/")
-	os.mkdir("R_truth/")
+	os.mkdir("R/")
 	os.chdir(PREFIX)
 
-if("M_truth" not in os.listdir(PREFIX+"plots/")):
+if("M" not in os.listdir(PREFIX+"plots/")):
 	os.chdir(PREFIX+"plots/")
-	os.mkdir("M_truth/")
+	os.mkdir("M/")
 	os.chdir(PREFIX)
 
 		
 var=["R","M"]
 RMPart=["Photon","TopQuark"]
 RMPartP=["Photon","TopQuark","bJet","WBoson","LeadingJet"]
+
+var=["M"]
+RMPart=["Photon"]
+RMPartP=["LeadingJet"]
 
 
 up_l=0.01
@@ -442,10 +446,19 @@ for va in var:
 			leg = ax1.legend()#title=r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level",fontsize="small")
 			#leg.get_title().set_fontsize('small')
 			#s = r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level"
+			
+			if va == "M":
+				if p1 == "Photon":
+					if p2 == "LeadingJet":
+						ax1.set_ylim(0,2.1e-2)
+						ax2.set_ylim(0.45,1.55)
+
+
 			left = lower_range
 			right = upper_range
 			bottom, top = ax1.get_ylim()
 			ax1.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level")
+
 
 			plt.savefig("plots/"+va+"/"+"decproint_"+p1+"_"+p2+"_"+va+".pdf",bbox_inches='tight')
 			plt.close()

@@ -85,6 +85,8 @@ for par in part:
 		left = lower_range
 		right = upper_range
 		ax = plt.gca()
+		if var == "PT":
+			ax.set_ylim(ymin=0)
 		bottom, top = ax.get_ylim()
 		ax.text(0.7*(left+right),0.4*(bottom+top),r"$\sqrt{s}=13\,$ TeV"+"\n"+"reco level")
 
@@ -165,6 +167,9 @@ for par in part:
 		ax1.set_xlim(lower_range,upper_range)
 		ax2.set_xlim(lower_range,upper_range)
 		ax2.set_ylim(0.5,1.5)
+
+		if var == "PT":
+			ax1.set_ylim(ymin=0)
 
 		labelkinax(ax1,ax2,var,par)
 		leg = ax1.legend()#title="KS Test: "+"{:.7f}".format(ksval),fontsize="small")

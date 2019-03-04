@@ -55,10 +55,10 @@ def parameters_kin(sam,var,par):
 	if((sam=="pro") | (sam=="int")):
 		upper_range=800
 	if(par == "Photon" and var=="PT"):
-		up_l=20
-		upper_range=800
+		up_l=0.2
+		upper_range=250
 		lower_range=0
-		nbin=default_nbins
+		nbin=20
 	if(par == "BQuark" and var=="PT"):
 		upper_range=400
 		lower_range=0
@@ -184,7 +184,7 @@ def labelkinax(ax,ax2,va,par):
 	ax.yaxis.set_label_coords(-0.085,0.5)
 	ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 	ax.grid(alpha=0.5)
-	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	#ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 	ax2.set_xlabel(label)
 	#ax.yaxis.set_label_coords(-0.085,0.5)
 	ax2.xaxis.set_minor_locator(ticker.AutoMinorLocator())

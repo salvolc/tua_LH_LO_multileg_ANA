@@ -32,7 +32,7 @@ eps=0.001
 
 tfl = ROOT.TFile("tua_crosscheck_salvatore.root","recreate")
 sample_numbers=[1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-sample_numbers=[1]
+sample_numbers=[1,2]
 for par in part:
 	for var in vari:
 		if(par == "Photon" and var=="M"):
@@ -58,8 +58,8 @@ for par in part:
 			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 			evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 			
-			decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
-			prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+			decay_fraction = np.genfromtxt("cross/tua_dec_onlyextra_"+str(sample_number)+"_cross")
+			prod_fraction = np.genfromtxt("cross/tua_pro_onlyextra_"+str(sample_number)+"_cross")
 
 			sdp = decay_fraction+prod_fraction
 			decay_fraction = decay_fraction/sdp
@@ -102,6 +102,7 @@ for par in part:
 		#nbin=128
 		#binning = np.linspace(lower_range, upper_range, nbin)
 		binning = set_dyn_binning(evi, lower_range, upper_range, nbin)
+		binning = np.linspace(lower_range, upper_range, nbin)
 
 		hi		= rplot.Hist(binning)
 		hisys	= rplot.Hist(binning)
@@ -123,8 +124,8 @@ for par in part:
 			evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 			evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 			
-			decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
-			prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+			decay_fraction = np.genfromtxt("cross/tua_dec_onlyextra_"+str(sample_number)+"_cross")
+			prod_fraction = np.genfromtxt("cross/tua_pro_onlyextra_"+str(sample_number)+"_cross")
 
 			sdp = decay_fraction+prod_fraction
 			decay_fraction = decay_fraction/sdp
@@ -164,6 +165,10 @@ for par in part:
 		print(hi.KolmogorovTest(hdp))
 		print()
 
+		hd.write("tua_dec_"+par+"_"+var)
+		hp.write("tua_pro_"+par+"_"+var)
+		hi.write("tua_int_"+par+"_"+var)
+
 		ax2.hist(binning[1:]-np.diff(binning)/2,bins=binning,weights=np.ones_like(binning[1:]),histtype="step",lw=0.8,color="black")
 		hdp.Divide(hi)
 		rplt.errorbar(hdp,fmt="none",axes=ax2,lw=0.6,color="green",label="_nolegend_")
@@ -178,7 +183,9 @@ for par in part:
 		ax2.set_ylim(0.5,1.5)
 
 		if par == "Photon" and var=="PT":
-			ax1.set_ylim(ymin=0)
+			#ax1.set_ylim(ymin=0)
+			ax1.set_yscale("log")
+			ax1.set_ylim(0.0005,0.02)
 			ax2.set_ylim(0.5,1.5)
 
 		labelkinax(ax1,ax2,var,par)
@@ -268,8 +275,8 @@ for va in var:
 				evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 				evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 				
-				decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
-				prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+				decay_fraction = np.genfromtxt("cross/tua_dec_onlyextra_"+str(sample_number)+"_cross")
+				prod_fraction = np.genfromtxt("cross/tua_pro_onlyextra_"+str(sample_number)+"_cross")
 
 				sdp = decay_fraction+prod_fraction
 				decay_fraction = decay_fraction/sdp
@@ -321,8 +328,8 @@ for va in var:
 				evi = evi[(np.abs(evi)>up_l) & (evi!=999.9)];evd = evd[(np.abs(evd)>up_l) & (evd!=999.9)];evp = evp[(np.abs(evp)>up_l) & (evp!=999.9)]
 				evi = np.clip(evi, lower_range+eps, upper_range-eps);evd = np.clip(evd, lower_range+eps, upper_range-eps);evp = np.clip(evp, lower_range+eps, upper_range-eps)
 				
-				decay_fraction = np.genfromtxt("cross/tua_LH_decay_LO_multileg_tt_wbua_2_"+str(sample_number)+"_cross")
-				prod_fraction = np.genfromtxt("cross/tua_LH_production_LO_multileg_ta_taj_2_"+str(sample_number)+"_cross")
+				decay_fraction = np.genfromtxt("cross/tua_dec_onlyextra_"+str(sample_number)+"_cross")
+				prod_fraction = np.genfromtxt("cross/tua_pro_onlyextra_"+str(sample_number)+"_cross")
 
 				sdp = decay_fraction+prod_fraction
 				decay_fraction = decay_fraction/sdp

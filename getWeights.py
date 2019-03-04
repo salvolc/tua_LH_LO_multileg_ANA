@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import os, inspect
 
-PATH = "/media/salv/Elements/big_generation2/crosssections/"
+PATH = "/run/user/1000/gvfs/sftp:host=arrakis,user=slacagni/media/slacagni/Elements/tua_onlyextra/crosssections/"
 
 PREFIX = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))+"/"
 
